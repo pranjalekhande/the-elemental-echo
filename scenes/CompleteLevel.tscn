@@ -1,0 +1,151 @@
+[gd_scene load_steps=10 format=4]
+
+[ext_resource type="PackedScene" path="res://scenes/Echo.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/components/CaveBackground.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/components/LevelBoundaries.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/IceWall.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/Heartspring.tscn" id="5"]
+[ext_resource type="Script" path="res://src/TextTrigger.gd" id="6"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform1"]
+size = Vector2(300, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform2"]
+size = Vector2(200, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform3"]
+size = Vector2(250, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_text"]
+size = Vector2(150, 100)
+
+[node name="CompleteLevel" type="Node2D"]
+
+[node name="CaveBackground" parent="." instance=ExtResource("2")]
+
+[node name="LevelBoundaries" parent="." instance=ExtResource("3")]
+
+[node name="Echo" parent="." instance=ExtResource("1")]
+position = Vector2(-500, -100)
+
+[node name="Platforms" type="Node2D" parent="."]
+
+[node name="StartPlatform" type="StaticBody2D" parent="Platforms"]
+position = Vector2(-500, 0)
+collision_layer = 2
+
+[node name="PlatformVisual" type="ColorRect" parent="Platforms/StartPlatform"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -16.0
+offset_right = 150.0
+offset_bottom = 16.0
+color = Color(0.6, 0.4, 0.2, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/StartPlatform"]
+shape = SubResource("RectangleShape2D_platform1")
+
+[node name="MidPlatform" type="StaticBody2D" parent="Platforms"]
+position = Vector2(-150, -80)
+collision_layer = 2
+
+[node name="PlatformVisual" type="ColorRect" parent="Platforms/MidPlatform"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -16.0
+offset_right = 100.0
+offset_bottom = 16.0
+color = Color(0.6, 0.4, 0.2, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/MidPlatform"]
+shape = SubResource("RectangleShape2D_platform2")
+
+[node name="FinalPlatform" type="StaticBody2D" parent="Platforms"]
+position = Vector2(400, -50)
+collision_layer = 2
+
+[node name="PlatformVisual" type="ColorRect" parent="Platforms/FinalPlatform"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -125.0
+offset_top = -16.0
+offset_right = 125.0
+offset_bottom = 16.0
+color = Color(0.6, 0.4, 0.2, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/FinalPlatform"]
+shape = SubResource("RectangleShape2D_platform3")
+
+[node name="IceWall" parent="." instance=ExtResource("4")]
+position = Vector2(100, -50)
+
+[node name="Heartspring" parent="." instance=ExtResource("5")]
+position = Vector2(450, -120)
+
+[node name="StartText" type="Area2D" parent="."]
+position = Vector2(-450, -50)
+script = ExtResource("6")
+trigger_message = "Welcome, Echo. The ancient caves grow cold... Find the Heartspring."
+show_once = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StartText"]
+shape = SubResource("RectangleShape2D_text")
+
+[node name="IceWallText" type="Area2D" parent="."]
+position = Vector2(0, -100)
+script = ExtResource("6")
+trigger_message = "Ice blocks your path. Switch to Fire form (Q) to melt through!"
+show_once = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="IceWallText"]
+shape = SubResource("RectangleShape2D_text")
+
+[node name="GoalText" type="Area2D" parent="."]
+position = Vector2(350, -100)
+script = ExtResource("6")
+trigger_message = "The Heartspring pulses weakly. Touch it to restore its power!"
+show_once = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GoalText"]
+shape = SubResource("RectangleShape2D_text")
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Instructions" type="Label" parent="UI"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -140.0
+offset_right = 400.0
+offset_bottom = -100.0
+theme_override_colors/font_color = Color(0.8, 0.9, 1, 0.8)
+theme_override_font_sizes/font_size = 16
+text = "WASD to move, SPACE to jump, Q to switch forms"
+
+[node name="LevelTitle" type="Label" parent="UI"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -180.0
+offset_right = 400.0
+offset_bottom = -140.0
+theme_override_colors/font_color = Color(1, 0.8, 0.4, 0.9)
+theme_override_font_sizes/font_size = 24
+text = "The Elemental Echo - Complete Level"
+
+[connection signal="body_entered" from="StartText" to="StartText" method="_on_body_entered"]
+[connection signal="body_entered" from="IceWallText" to="IceWallText" method="_on_body_entered"]
+[connection signal="body_entered" from="GoalText" to="GoalText" method="_on_body_entered"] 
