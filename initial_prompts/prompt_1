@@ -1,0 +1,29 @@
+Game Concept:
+I want to create a 2D puzzle game, titled "The Elemental Echo," where the player controls Echo, a magical "Spark of Essence." Echo possesses the ability to instantly shift between a Flame Form and a Water Form to overcome environmental obstacles.
+
+Game Type and Camera:
+The game will feature a 2D side-view perspective (similar to Fireboy and Watergirl). Echo will float and move freely in all directions within an enclosed level. The camera will follow Echo, keeping them centered on the screen.
+
+Initial MVP Focus:
+For this Minimum Viable Product (MVP), we will only implement one specific elemental interaction: Echo's Flame Form melting Ice Walls. This will be the sole primary obstacle for the first playable level.
+
+MVP Development Phases:
+**Phase 1:** Set up basic Godot project structure and get Echo moving around with visual form switching
+**Phase 2:** Add one ice wall that blocks Echo's movement  
+**Phase 3:** Make fire form melt the ice wall, clearing the path
+**Phase 4:** Add the Heartspring goal that Echo must reach and activate
+
+MVP Objectives:
+The first thing I would like you to do is to set up the basic Godot project structure.
+
+The final MVP will feature:
+- A single, enclosed level
+- Echo reaching and activating the "First Fading Heartspring"
+- Path blocked by at least one "Ice Wall" obstacle
+- Echo using Flame Form to melt the Ice Wall
+- Basic floating movement for Echo (all directions)
+- Functional elemental shifting between Flame Form and Water Form
+
+For now, just set up the Godot project structure with basic scenes and scripts.  and the necessary project folder structure (e.g., src for game logic, assets for 
+potential placeholder images). Do not implement any game logic, art assets, or 
+complex features yet.

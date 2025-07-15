@@ -1,0 +1,12 @@
+Now, I want to create the main player character, Echo, and make it move.
+
+Character: Echo, the "Spark of Essence."
+
+Appearance (Placeholder): For now, use a simple placeholder graphic (e.g., a colored circle or square) to represent Echo.
+
+Movement: Echo should be able to float freely in all 4 cardinal directions (up, down, left, right) using keyboard input.
+
+Camera: The camera should follow Echo, keeping it generally centered on the screen.
+
+For now, just create a new Godot scene for the player, add a placeholder graphic, and implement the basic movement script. 
+Do not implement any elemental shifting or other game logic yet.

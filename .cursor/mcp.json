@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "godot": {
+      "command": "node",
+      "args": ["/Users/pranjal/godot-mcp/build/index.js"],
+      "env": {
+        "GODOT_PATH": "/Users/pranjal/Downloads/Godot.app/Contents/MacOS/Godot",
+        "DEBUG": "true"
+      }
+    }
+  }
+}

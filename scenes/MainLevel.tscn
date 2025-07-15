@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3 uid="uid://wcms1qg2i585"]
+
+[ext_resource type="PackedScene" uid="uid://bl2j3j0vtavm8" path="res://scenes/Echo.tscn" id="1"]
+[ext_resource type="TileSet" uid="uid://dxfv6hak8wewb" path="res://resources/cavernas_tileset.tres" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/IceWall.tscn" id="2"]
+
+[node name="MainLevel" type="Node2D"]
+
+[node name="Echo" parent="." instance=ExtResource("1")]
+
+[node name="BG" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(2000, 1200)
+position = Vector2(-1000, -600)
+color = Color(0.11, 0.12, 0.15, 1)
+z_index = -10
+
+[node name="CaveMap" type="TileMap" parent="."]
+tile_set = ExtResource("3")
+format = 2
+
+[node name="Layer1" type="TileMapLayer" parent="CaveMap"]
+use_parent_material = true
+tile_set = ExtResource("3")
+
+[node name="IceWall" parent="." instance=ExtResource("2")]
+position = Vector2(200,0)
