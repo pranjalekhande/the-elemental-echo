@@ -1,0 +1,285 @@
+[gd_scene load_steps=20 format=4 uid="uid://dqpsjx3n4mwyl"]
+
+[ext_resource type="PackedScene" path="res://scenes/Echo.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/IceWall.tscn" id="2"]
+[ext_resource type="TileSet" uid="uid://cg8h9i2j3k4l5m6n" path="res://resources/new_ground_tileset.tres" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/Heartspring.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/InteractiveButton.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/FireWaterHazard.tscn" id="6"]
+[ext_resource type="Texture2D" path="res://assets/background_forest.jpg" id="7"]
+[ext_resource type="Script" uid="uid://m6dd1yn8y6qe" path="res://src/TextTrigger.gd" id="8"]
+[ext_resource type="Script" path="res://src/InteractiveDoor.gd" id="9"]
+[ext_resource type="AudioStream" path="res://assets/audio/LevelMusic.mp3" id="10"]
+[ext_resource type="AudioStream" path="res://assets/audio/Steps.mp3" id="11"]
+[ext_resource type="AudioStream" path="res://assets/audio/Door.mp3" id="12"]
+[ext_resource type="AudioStream" path="res://assets/audio/Diamond.mp3" id="13"]
+
+[sub_resource type="Environment" id="Environment_professional"]
+background_mode = 1
+background_color = Color(0.08, 0.1, 0.15, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.4, 0.5, 0.7, 1)
+ambient_light_energy = 0.4
+fog_enabled = true
+fog_light_color = Color(0.3, 0.4, 0.6, 1)
+fog_sun_scatter = 0.2
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_text"]
+size = Vector2(120, 80)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_door"]
+size = Vector2(32, 96)
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_glow"]
+blend_mode = 1
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_checkpoint"]
+size = Vector2(80, 80)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_collectible"]
+size = Vector2(32, 32)
+
+[node name="ProfessionalLevel" type="Node2D"]
+
+# BACKGROUND SYSTEM
+[node name="Environment" type="Node2D" parent="."]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment"]
+environment = SubResource("Environment_professional")
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="Environment"]
+
+[node name="FarBackground" type="ParallaxLayer" parent="Environment/ParallaxBackground"]
+motion_scale = Vector2(0.2, 0.3)
+
+[node name="FarSprite" type="Sprite2D" parent="Environment/ParallaxBackground/FarBackground"]
+modulate = Color(0.3, 0.4, 0.5, 0.6)
+scale = Vector2(3, 2)
+texture = ExtResource("7")
+
+[node name="MidBackground" type="ParallaxLayer" parent="Environment/ParallaxBackground"]
+motion_scale = Vector2(0.5, 0.7)
+
+[node name="MidSprite" type="Sprite2D" parent="Environment/ParallaxBackground/MidBackground"]
+modulate = Color(0.5, 0.6, 0.7, 0.8)
+scale = Vector2(2, 1.5)
+texture = ExtResource("7")
+
+# MAIN LEVEL GEOMETRY
+[node name="LevelGeometry" type="Node2D" parent="."]
+
+[node name="GroundTiles" type="TileMap" parent="LevelGeometry"]
+tile_set = ExtResource("3")
+format = 2
+
+# Starting area - solid foundation
+[node name="StartingPlatform" type="TileMapLayer" parent="LevelGeometry/GroundTiles"]
+tile_map_data = PackedByteArray("AAD+////AQAAAAEAAAD//wAAAQAAAAEAAAAAAAEAAQAAAAEAAAABAAEAAQAAAAEAAAACAAEAAQAAAAEAAAADAAEAAQAAAAEAAAAEAAEAAQAAAAEAAAAFAAEAAQAAAAEAAAA=")
+
+# Tutorial section platforms
+[node name="TutorialPlatforms" type="TileMapLayer" parent="LevelGeometry/GroundTiles"]
+tile_map_data = PackedByteArray("AAAGAP//AQAAAAEAAAAHAP//AQAAAAEAAAAIAP//AQAAAAEAAAAJAP//AQAAAAEAAAAKAP//AQAAAAEAAAALAP//AQAAAAEAAAAMAP//AQAAAAEAAGANAP//AQAAAAEAAAAOAP//AQAAAAEAAAAPAP//AQAAAAEAAABQAP//AQAAAAEAAAABQAP//AQAAAAEAAAASAP//AQAAAAEAAABQAAEAAQAAAAEAAAABQAAEAAQAAAAEAAAASAAEAAQAAAAEA=")
+
+# Button puzzle area
+[node name="ButtonArea" type="TileMapLayer" parent="LevelGeometry/GroundTiles"]
+tile_map_data = PackedByteArray("AAAUAP3/AQAAAAEAAAAVAP3/AQAAAAEAAAAWAP3/AQAAAAEAAAAXAP3/AQAAAAEAAAAYAP3/AQAAAAEAAAAZAP3/AQAAAAEAAAAUAAEAAQAAAAEAAAAVAAAEAAQAAAAEAAAWAAEAAQAAAAEAAAAXAAEAAQAAAAEAAAAYAAEAAQAAAAEAAAAZAAEAAQAAAAEA=")
+
+# Hazard section elevated platforms
+[node name="HazardPlatforms" type="TileMapLayer" parent="LevelGeometry/GroundTiles"]
+tile_map_data = PackedByteArray("AAAbAP3/AQABAAEAAAAcAP3/AQABAAEAAAAdAP3/AQABAAEAAAAeAP3/AQABAAEAAAAfAP3/AQABAAEAAAAgAP3/AQABAAEAAAAhAP3/AQABAAEAAAAiAP3/AQABAAEAAAAjAP3/AQABAAEAAAAkAP3/AQABAAEAAAAlAP3/AQABAAEAAAAmAP3/AQABAAEAAACnAP3/AQABAAEAAAAoAP3/AQABAAEAAAA=")
+
+# Final challenge area
+[node name="FinalArea" type="TileMapLayer" parent="LevelGeometry/GroundTiles"]
+tile_map_data = PackedByteArray("AAApAP//AQABAAEAAAAqAP//AQABAAEAAAArAP//AQABAAEAAAAsAP//AQABAAEAAAAtAP//AQABAAEAAAAuAP//AQABAAEAAAAvAP//AQABAAEAAAAwAP//AQABAAEAAAAxAP//AQABAAEAAAAyAP//AQABAAEAAAAzAP//AQABAAEAAAA0AP//AQABAAEAAAAqAAEAAQABAAEAAAArAAEAAQABAAEAAAAsAAEAAQABAAEAAAAtAAEAAQABAAEAAAAuAAEAAQABAAEAAAAvAAEAAQABAAEAAAAwAAEAAQABAAEAAAAxAAEAAQABAAEAAAAyAAEAAQABAAEAAAAzAAEAAQABAAEAAAA0AAEAAQABAAEA=")
+
+# GAME OBJECTS
+[node name="GameObjects" type="Node2D" parent="."]
+
+# Player spawn
+[node name="Echo" parent="GameObjects" instance=ExtResource("1")]
+position = Vector2(-650, -50)
+
+# Tutorial section
+[node name="TutorialCheckpoint" type="Area2D" parent="GameObjects"]
+position = Vector2(-400, -100)
+
+[node name="CheckpointSprite" type="ColorRect" parent="GameObjects/TutorialCheckpoint"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -40.0
+offset_top = -40.0
+offset_right = 40.0
+offset_bottom = 40.0
+color = Color(0, 1, 1, 0.7)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GameObjects/TutorialCheckpoint"]
+shape = SubResource("RectangleShape2D_checkpoint")
+
+# Button puzzle section
+[node name="Button1" parent="GameObjects" instance=ExtResource("5")]
+position = Vector2(-100, -250)
+
+[node name="Button2" parent="GameObjects" instance=ExtResource("5")]
+position = Vector2(100, -250)
+
+[node name="Door1" type="StaticBody2D" parent="GameObjects"]
+position = Vector2(0, -150)
+collision_layer = 2
+script = ExtResource("9")
+
+[node name="DoorSprite" type="ColorRect" parent="GameObjects/Door1"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -48.0
+offset_right = 16.0
+offset_bottom = 48.0
+color = Color(0.4, 0.25, 0.15, 1)
+
+[node name="DoorCollision" type="CollisionShape2D" parent="GameObjects/Door1"]
+shape = SubResource("RectangleShape2D_door")
+
+# Hazard section with proper spacing
+[node name="FireHazard1" parent="GameObjects" instance=ExtResource("6")]
+position = Vector2(300, -200)
+
+[node name="WaterHazard1" parent="GameObjects" instance=ExtResource("6")]
+position = Vector2(450, -200)
+hazard_type = 1
+
+[node name="FireHazard2" parent="GameObjects" instance=ExtResource("6")]
+position = Vector2(600, -200)
+
+[node name="SafePlatformSprite" type="ColorRect" parent="GameObjects"]
+position = Vector2(525, -150)
+size = Vector2(50, 20)
+color = Color(0.6, 0.5, 0.4, 1)
+
+# Ice wall challenge
+[node name="IceWall" parent="GameObjects" instance=ExtResource("2")]
+position = Vector2(800, -150)
+
+# Collectibles for engagement
+[node name="Collectible1" type="Area2D" parent="GameObjects"]
+position = Vector2(-200, -180)
+
+[node name="CollectibleSprite" type="ColorRect" parent="GameObjects/Collectible1"]
+material = SubResource("CanvasItemMaterial_glow")
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+color = Color(1, 1, 0, 0.8)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GameObjects/Collectible1"]
+shape = SubResource("RectangleShape2D_collectible")
+
+[node name="Collectible2" parent="GameObjects" instance_editable=false]
+position = Vector2(375, -130)
+
+# Goal area
+[node name="Heartspring" parent="GameObjects" instance=ExtResource("4")]
+position = Vector2(1000, -100)
+
+# TEXT AND GUIDANCE SYSTEM
+[node name="Guidance" type="Node2D" parent="."]
+
+[node name="WelcomeText" type="Area2D" parent="Guidance"]
+position = Vector2(-600, -30)
+script = ExtResource("8")
+trigger_message = "🎮 Welcome! Use WASD to move, SPACE to switch forms. Master fire and water!"
+show_once = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Guidance/WelcomeText"]
+shape = SubResource("RectangleShape2D_text")
+
+[node name="ButtonHint" type="Area2D" parent="Guidance"]
+position = Vector2(-150, -200)
+script = ExtResource("8")
+trigger_message = "💡 Stand on BOTH buttons to open the door. Teamwork puzzle!"
+show_once = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Guidance/ButtonHint"]
+shape = SubResource("RectangleShape2D_text")
+
+[node name="HazardWarning" type="Area2D" parent="Guidance"]
+position = Vector2(250, -150)
+script = ExtResource("8")
+trigger_message = "⚠️ DANGER! Fire harms water form, water harms fire form. Choose wisely!"
+show_once = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Guidance/HazardWarning"]
+shape = SubResource("RectangleShape2D_text")
+
+[node name="IceHint" type="Area2D" parent="Guidance"]
+position = Vector2(750, -100)
+script = ExtResource("8")
+trigger_message = "🔥 Ice blocks your path. Try fire form to melt it!"
+show_once = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Guidance/IceHint"]
+shape = SubResource("RectangleShape2D_text")
+
+[node name="VictoryHint" type="Area2D" parent="Guidance"]
+position = Vector2(950, -50)
+script = ExtResource("8")
+trigger_message = "✨ The Heartspring awaits! Touch it to complete your quest!"
+show_once = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Guidance/VictoryHint"]
+shape = SubResource("RectangleShape2D_text")
+
+# AUDIO SYSTEM
+[node name="Audio" type="Node2D" parent="."]
+
+[node name="BackgroundMusic" type="AudioStreamPlayer" parent="Audio"]
+stream = ExtResource("10")
+volume_db = -15.0
+autoplay = true
+
+[node name="AmbientSounds" type="AudioStreamPlayer" parent="Audio"]
+stream = ExtResource("11")
+volume_db = -25.0
+autoplay = true
+
+# VISUAL EFFECTS
+[node name="Effects" type="Node2D" parent="."]
+
+[node name="TorchLight1" type="PointLight2D" parent="Effects"]
+position = Vector2(-400, -120)
+color = Color(1, 0.7, 0.3, 1)
+energy = 0.8
+texture_scale = 2.0
+
+[node name="TorchLight2" type="PointLight2D" parent="Effects"]
+position = Vector2(200, -170)
+color = Color(1, 0.7, 0.3, 1)
+energy = 0.8
+texture_scale = 2.0
+
+[node name="GoalLight" type="PointLight2D" parent="Effects"]
+position = Vector2(1000, -120)
+color = Color(1, 1, 0.8, 1)
+energy = 1.2
+texture_scale = 3.0
+
+# CONNECTIONS
+[connection signal="button_pressed" from="GameObjects/Button1" to="GameObjects/Door1" method="_on_button_pressed"]
+[connection signal="button_pressed" from="GameObjects/Button2" to="GameObjects/Door1" method="_on_button_pressed"]
+[connection signal="body_entered" from="GameObjects/Collectible1" to="." method="_on_collectible_collected"]
+[connection signal="body_entered" from="Guidance/WelcomeText" to="Guidance/WelcomeText" method="_on_body_entered"]
+[connection signal="body_entered" from="Guidance/ButtonHint" to="Guidance/ButtonHint" method="_on_body_entered"]
+[connection signal="body_entered" from="Guidance/HazardWarning" to="Guidance/HazardWarning" method="_on_body_entered"]
+[connection signal="body_entered" from="Guidance/IceHint" to="Guidance/IceHint" method="_on_body_entered"]
+[connection signal="body_entered" from="Guidance/VictoryHint" to="Guidance/VictoryHint" method="_on_body_entered"] 

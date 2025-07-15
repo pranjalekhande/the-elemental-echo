@@ -1,0 +1,157 @@
+[gd_scene load_steps=15 format=4 uid="uid://dq0or4v0rj6o4"]
+
+[ext_resource type="PackedScene" path="res://scenes/Echo.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/IceWall.tscn" id="2"]
+[ext_resource type="TileSet" uid="uid://cg8h9i2j3k4l5m6n" path="res://resources/new_ground_tileset.tres" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/Heartspring.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/InteractiveButton.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/FireWaterHazard.tscn" id="6"]
+[ext_resource type="Texture2D" path="res://assets/background_forest.jpg" id="7"]
+[ext_resource type="Script" uid="uid://m6dd1yn8y6qe" path="res://src/TextTrigger.gd" id="8"]
+[ext_resource type="Script" uid="uid://b00wy7u3inqu7" path="res://src/LevelGoal.gd" id="9"]
+[ext_resource type="AudioStream" path="res://assets/audio/LevelMusic.mp3" id="10"]
+[ext_resource type="Script" path="res://src/InteractiveDoor.gd" id="11"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_text"]
+size = Vector2(150, 100)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_door"]
+size = Vector2(64, 128)
+
+[sub_resource type="Environment" id="Environment_cave"]
+background_mode = 1
+background_color = Color(0.1, 0.12, 0.18, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.6, 0.7, 0.8, 1)
+ambient_light_energy = 0.3
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_goal"]
+size = Vector2(100, 100)
+
+[node name="NewMainLevel" type="Node2D"]
+
+[node name="Background" type="ParallaxBackground" parent="."]
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="Background"]
+motion_scale = Vector2(0.5, 0.5)
+
+[node name="ForestBackground" type="Sprite2D" parent="Background/ParallaxLayer"]
+position = Vector2(0, 0)
+scale = Vector2(2, 1.5)
+texture = ExtResource("7")
+modulate = Color(0.4, 0.5, 0.6, 0.8)
+
+[node name="Echo" parent="." instance=ExtResource("1")]
+position = Vector2(-600, 0)
+
+[node name="LevelTiles" type="TileMap" parent="."]
+tile_set = ExtResource("3")
+format = 2
+
+[node name="GroundLayer" type="TileMapLayer" parent="LevelTiles"]
+tile_map_data = PackedByteArray("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AAD2//v/AQAAAAEAAAD1//v/AQAAAAEAAAD0//v/AQAAAAEAAAD3//r/AQAAAAEAAAD2//r/AQAAAAEAAAD1//r/AQAAAAEAAAD0//r/AQAAAAEAAAD3//n/AQAAAAEAAAD2//n/AQAAAAEAAAD1//n/AQAAAAEAAAD0//n/AQAAAAEAAAD3//j/AQAAAAEAAAD2//j/AQAAAAEAAAD1//j/AQAAAAEAAAD0//j/AQAAAAEAAAD3//f/AQAAAAEAAAD2//f/AQAAAAEAAAD1//f/AQAAAAEAAAD0//f/AQAAAAEAAAD3//b/AQAAAAEAAAD2//b/AQAAAAEAAAD1//b/AQAAAAEAAAD0//b/AQAAAAEAAAD3//X/AQAAAAEAAAD2//X/AQAAAAEAAAD1//X/AQAAAAEAAAD0//X/AQAAAAEAAAD3//T/AQAAAAEAAAD2//T/AQAAAAEAAAD1//T/AQAAAAEAAAD0//T/AQAAAAEAAAD3//P/AQAAAAEAAAD2//P/AQAAAAEAAAD1//P/AQAAAAEAAAD0//P/AQAAAAEAAABQAAEAAQAAAAEAAABPAAEAAQAAAAEAAABPAAEAAQAAAAEAAABNAAEAAQAAAAEAAABMAAEAAQAAAAEAAABLAAEAAQAAAAEAAABKAAEAAQAAAAEAAABJAAEAAQAAAAEAAABIAAEAAQAAAAEAAABHAAEAAQAAAAEAAABGAAEAAQAAAAEAAABFAAEAAQAAAAEAAABQAAIAAAAAAEAAABPAAIAAAAAAEAAABPAAIAAAAAAEAAABNAAIAAAAAAEAAABMAAIAAAAAAEAAABLAAIAAAAAAEAAABKAAIAAAAAAEAAABJAAIAAAAAAEAAABIAAIAAAAAAEAAABHAAIAAAAAAEAAABGAAIAAAAAAEAAABFAAIAAAAAAEA=")
+
+[node name="PlatformLayer" type="TileMapLayer" parent="LevelTiles"]
+y_sort_enabled = true
+tile_map_data = PackedByteArray("AAD6//3/AQABAAEAAAD7//3/AQABAAEAAAD8//3/AQABAAEAAAD9//3/AQABAAEAAAD+//3/AQABAAEAAAD///3/AQABAAEAAAAAAP3/AQABAAEAAAABAAD9/wEBAQEAAAD2//X/AQABAAEAAAD3//X/AQABAAEAAAD4//X/AQABAAEAAAD5//X/AQABAAEAAAD2//T/AQABAAEAAAD5//T/AQABAAEAAAD2//P/AQABAAEAAAD3//P/AQABAAEAAAD4//P/AQABAAEAAAD5//P/AQABAAEAAABNAAEAAQABAAEAAABPAAEAAQABAAEAAABPAAEAAQABAAEAAABQAAEAAQABAAEAAABRAAEAAQABAAEAAABSAAEAAQABAAEAAABTAAEAAQABAAEAAABNAAIAAAAAAEAAABPAAIAAAAAAEAAABPAAIAAAAAAEAAABQAAIAAAAAAEAAABRAAIAAAAAAEAAABSAAIAAAAAAEAAABTAAIAAAAAAEA=")
+
+[node name="IceWall" parent="." instance=ExtResource("2")]
+position = Vector2(-150, -100)
+
+[node name="Button1" parent="." instance=ExtResource("5")]
+position = Vector2(-300, -160)
+
+[node name="FireHazard1" parent="." instance=ExtResource("6")]
+position = Vector2(200, -160)
+
+[node name="WaterHazard1" parent="." instance=ExtResource("6")]
+position = Vector2(350, -160)
+hazard_type = 1
+
+[node name="Heartspring" parent="." instance=ExtResource("4")]
+position = Vector2(600, -100)
+
+[node name="Door" type="StaticBody2D" parent="."]
+position = Vector2(100, -96)
+collision_layer = 2
+script = ExtResource("11")
+
+[node name="DoorSprite" type="ColorRect" parent="Door"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -32.0
+offset_top = -64.0
+offset_right = 32.0
+offset_bottom = 64.0
+color = Color(0.5, 0.3, 0.2, 1)
+
+[node name="DoorCollision" type="CollisionShape2D" parent="Door"]
+shape = SubResource("RectangleShape2D_door")
+
+[node name="TextTriggers" type="Node2D" parent="."]
+
+[node name="StartTrigger" type="Area2D" parent="TextTriggers"]
+position = Vector2(-550, 0)
+script = ExtResource("8")
+trigger_message = "Welcome to the Elemental Caverns. Switch forms with SPACE to overcome obstacles."
+show_once = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TextTriggers/StartTrigger"]
+shape = SubResource("RectangleShape2D_text")
+
+[node name="ButtonTrigger" type="Area2D" parent="TextTriggers"]
+position = Vector2(-250, -100)
+script = ExtResource("8")
+trigger_message = "Step on the button to open the door ahead."
+show_once = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TextTriggers/ButtonTrigger"]
+shape = SubResource("RectangleShape2D_text")
+
+[node name="HazardTrigger" type="Area2D" parent="TextTriggers"]
+position = Vector2(150, -100)
+script = ExtResource("8")
+trigger_message = "Beware! Fire burns water, water extinguishes fire. Choose your form wisely."
+show_once = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TextTriggers/HazardTrigger"]
+shape = SubResource("RectangleShape2D_text")
+
+[node name="GoalTrigger" type="Area2D" parent="TextTriggers"]
+position = Vector2(550, -50)
+script = ExtResource("8")
+trigger_message = "The Heartspring glows brighter as you approach. Touch it to restore its power!"
+show_once = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TextTriggers/GoalTrigger"]
+shape = SubResource("RectangleShape2D_text")
+
+[node name="LevelGoal" type="Area2D" parent="."]
+position = Vector2(600, -100)
+script = ExtResource("9")
+collision_layer = 16
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LevelGoal"]
+shape = SubResource("RectangleShape2D_goal")
+
+[node name="Audio" type="Node" parent="."]
+
+[node name="BackgroundMusic" type="AudioStreamPlayer" parent="Audio"]
+stream = ExtResource("10")
+volume_db = -20.0
+autoplay = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_cave")
+
+[connection signal="button_pressed" from="Button1" to="Door" method="_on_button_pressed"]
+[connection signal="button_released" from="Button1" to="Door" method="_on_button_released"]
+[connection signal="body_entered" from="TextTriggers/StartTrigger" to="TextTriggers/StartTrigger" method="_on_body_entered"]
+[connection signal="body_entered" from="TextTriggers/ButtonTrigger" to="TextTriggers/ButtonTrigger" method="_on_body_entered"]
+[connection signal="body_entered" from="TextTriggers/HazardTrigger" to="TextTriggers/HazardTrigger" method="_on_body_entered"]
+[connection signal="body_entered" from="TextTriggers/GoalTrigger" to="TextTriggers/GoalTrigger" method="_on_body_entered"]
+[connection signal="body_entered" from="LevelGoal" to="LevelGoal" method="_on_body_entered"] 
