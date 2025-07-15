@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://b2fweyfpxssqg"]
+[gd_scene load_steps=14 format=3 uid="uid://b2fweyfpxssqg"]
 
 [ext_resource type="PackedScene" uid="uid://c258t6ukqdor4" path="res://scenes/Echo.tscn" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/components/CaveBackground.tscn" id="2"]
@@ -6,27 +6,31 @@
 [ext_resource type="PackedScene" path="res://scenes/IceWall.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/Heartspring.tscn" id="5"]
 [ext_resource type="Script" uid="uid://m6dd1yn8y6qe" path="res://src/TextTrigger.gd" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/FireDiamond.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/WaterDiamond.tscn" id="8"]
+[ext_resource type="Script" uid="uid://b4376p8w1wjsv" path="res://src/MainLevel.gd" id="9"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform1"]
-size = Vector2(300, 32)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_large"]
+size = Vector2(400, 32)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform2"]
-size = Vector2(200, 32)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_medium"]
+size = Vector2(240, 32)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform3"]
-size = Vector2(250, 32)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_small"]
+size = Vector2(160, 32)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_text"]
 size = Vector2(150, 100)
 
 [node name="CompleteLevel" type="Node2D"]
+script = ExtResource("9")
 
 [node name="CaveBackground" parent="." instance=ExtResource("2")]
 
 [node name="LevelBoundaries" parent="." instance=ExtResource("3")]
 
 [node name="Echo" parent="." instance=ExtResource("1")]
-position = Vector2(-500, -100)
+position = Vector2(-500, -50)
 
 [node name="Platforms" type="Node2D" parent="."]
 
@@ -40,63 +44,82 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -150.0
+offset_left = -200.0
 offset_top = -16.0
-offset_right = 150.0
+offset_right = 200.0
 offset_bottom = 16.0
 color = Color(0.6, 0.4, 0.2, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/StartPlatform"]
-shape = SubResource("RectangleShape2D_platform1")
+shape = SubResource("RectangleShape2D_large")
 
-[node name="MidPlatform" type="StaticBody2D" parent="Platforms"]
+[node name="LearningPlatform" type="StaticBody2D" parent="Platforms"]
 position = Vector2(-150, -80)
 collision_layer = 2
 
-[node name="PlatformVisual" type="ColorRect" parent="Platforms/MidPlatform"]
+[node name="PlatformVisual" type="ColorRect" parent="Platforms/LearningPlatform"]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -100.0
+offset_left = -120.0
 offset_top = -16.0
-offset_right = 100.0
+offset_right = 120.0
 offset_bottom = 16.0
 color = Color(0.6, 0.4, 0.2, 1)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/MidPlatform"]
-shape = SubResource("RectangleShape2D_platform2")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/LearningPlatform"]
+shape = SubResource("RectangleShape2D_medium")
 
-[node name="FinalPlatform" type="StaticBody2D" parent="Platforms"]
-position = Vector2(400, -50)
+[node name="ChallengePlatform" type="StaticBody2D" parent="Platforms"]
+position = Vector2(200, -120)
 collision_layer = 2
 
-[node name="PlatformVisual" type="ColorRect" parent="Platforms/FinalPlatform"]
+[node name="PlatformVisual" type="ColorRect" parent="Platforms/ChallengePlatform"]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -125.0
+offset_left = -80.0
 offset_top = -16.0
-offset_right = 125.0
+offset_right = 80.0
 offset_bottom = 16.0
 color = Color(0.6, 0.4, 0.2, 1)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/FinalPlatform"]
-shape = SubResource("RectangleShape2D_platform3")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/ChallengePlatform"]
+shape = SubResource("RectangleShape2D_small")
+
+[node name="GoalPlatform" type="StaticBody2D" parent="Platforms"]
+position = Vector2(500, -80)
+collision_layer = 2
+
+[node name="PlatformVisual" type="ColorRect" parent="Platforms/GoalPlatform"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -120.0
+offset_top = -16.0
+offset_right = 120.0
+offset_bottom = 16.0
+color = Color(0.2, 0.8, 0.2, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/GoalPlatform"]
+shape = SubResource("RectangleShape2D_medium")
 
 [node name="IceWall" parent="." instance=ExtResource("4")]
-position = Vector2(100, -50)
+position = Vector2(50, -50)
 
 [node name="Heartspring" parent="." instance=ExtResource("5")]
-position = Vector2(450, -120)
+position = Vector2(500, -120)
 
 [node name="StartText" type="Area2D" parent="."]
 position = Vector2(-450, -50)
 script = ExtResource("6")
-trigger_message = "Welcome, Echo. The ancient caves grow cold... Find the Heartspring."
+trigger_message = "Welcome, Echo. Practice switching forms (Q) and collect elemental diamonds."
 show_once = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StartText"]
@@ -105,16 +128,16 @@ shape = SubResource("RectangleShape2D_text")
 [node name="IceWallText" type="Area2D" parent="."]
 position = Vector2(0, -100)
 script = ExtResource("6")
-trigger_message = "Ice blocks your path. Switch to Fire form (Q) to melt through!"
+trigger_message = "Ice blocks your path! Switch to Fire form (Q) to melt through."
 show_once = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="IceWallText"]
 shape = SubResource("RectangleShape2D_text")
 
 [node name="GoalText" type="Area2D" parent="."]
-position = Vector2(350, -100)
+position = Vector2(450, -100)
 script = ExtResource("6")
-trigger_message = "The Heartspring pulses weakly. Touch it to restore its power!"
+trigger_message = "The Heartspring awaits! Touch it to complete Level 1."
 show_once = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="GoalText"]
@@ -144,7 +167,21 @@ offset_right = 400.0
 offset_bottom = -140.0
 theme_override_colors/font_color = Color(1, 0.8, 0.4, 0.9)
 theme_override_font_sizes/font_size = 24
-text = "The Elemental Echo - Complete Level"
+text = "The Elemental Echo - Level 1: First Steps"
+
+[node name="Diamonds" type="Node2D" parent="."]
+
+[node name="StartFireDiamond" parent="Diamonds" instance=ExtResource("7")]
+position = Vector2(-500, -50)
+
+[node name="LearningWaterDiamond" parent="Diamonds" instance=ExtResource("8")]
+position = Vector2(-150, -130)
+
+[node name="ChallengeFireDiamond" parent="Diamonds" instance=ExtResource("7")]
+position = Vector2(200, -170)
+
+[node name="GoalWaterDiamond" parent="Diamonds" instance=ExtResource("8")]
+position = Vector2(500, -130)
 
 [connection signal="body_entered" from="StartText" to="StartText" method="_on_body_entered"]
 [connection signal="body_entered" from="IceWallText" to="IceWallText" method="_on_body_entered"]

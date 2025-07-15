@@ -50,6 +50,10 @@ func _toggle_form() -> void:
 	current_form = ElementalForms.Form.WATER if current_form == ElementalForms.Form.FIRE else ElementalForms.Form.FIRE
 	_update_form_visual()
 	
+	# Track form switch for collection manager
+	if CollectionManager:
+		CollectionManager.track_form_switch()
+	
 	# If changing to fire form, check all overlapping ice walls
 	if current_form == ElementalForms.Form.FIRE:
 		for wall in overlapping_ice_walls:
@@ -62,12 +66,23 @@ func _toggle_form() -> void:
 		is_changing_form = false
 	)
 
+func get_current_form() -> String:
+	"""Return current form as string for diamond compatibility checking"""
+	match current_form:
+		ElementalForms.Form.FIRE:
+			return "fire"
+		ElementalForms.Form.WATER:
+			return "water"
+		_:
+			return "unknown"
+
+func get_current_form_enum() -> ElementalForms.Form:
+	"""Return current form as enum for internal use"""
+	return current_form
+
 func _update_form_visual() -> void:
 	visual.color = ElementalForms.get_form_color(current_form)
 	_update_health_bar_color()
-
-func get_current_form() -> int:
-	return current_form
 
 func _physics_process(delta: float) -> void:
 	# Store position before move

@@ -50,7 +50,7 @@ func handle_fire_form(body: Node2D) -> void:
 func _on_body_entered(body: Node) -> void:
 	if not is_melting and body is CharacterBody2D and body.has_method("get_current_form"):
 		var form = body.get_current_form()
-		if form == ElementalForms.Form.FIRE:
+		if form == "fire":
 			handle_fire_form(body)
 		# Water form should not pass through - collision stays enabled
 
