@@ -1,11 +1,11 @@
-[gd_scene load_steps=10 format=4]
+[gd_scene load_steps=11 format=3 uid="uid://b2fweyfpxssqg"]
 
-[ext_resource type="PackedScene" path="res://scenes/Echo.tscn" id="1"]
+[ext_resource type="PackedScene" uid="uid://c258t6ukqdor4" path="res://scenes/Echo.tscn" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/components/CaveBackground.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/components/LevelBoundaries.tscn" id="3"]
 [ext_resource type="PackedScene" path="res://scenes/IceWall.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/Heartspring.tscn" id="5"]
-[ext_resource type="Script" path="res://src/TextTrigger.gd" id="6"]
+[ext_resource type="Script" uid="uid://m6dd1yn8y6qe" path="res://src/TextTrigger.gd" id="6"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_platform1"]
 size = Vector2(300, 32)
@@ -148,4 +148,4 @@ text = "The Elemental Echo - Complete Level"
 
 [connection signal="body_entered" from="StartText" to="StartText" method="_on_body_entered"]
 [connection signal="body_entered" from="IceWallText" to="IceWallText" method="_on_body_entered"]
-[connection signal="body_entered" from="GoalText" to="GoalText" method="_on_body_entered"] 
+[connection signal="body_entered" from="GoalText" to="GoalText" method="_on_body_entered"]

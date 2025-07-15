@@ -34,9 +34,12 @@ func activate(echo: Node2D = null) -> void:
 	# Visual/audio feedback would go here
 	print("Heartspring activated! Healing provided.")
 	
-	# Set cooldown before it can be activated again
-	var timer = get_tree().create_timer(activation_cooldown)
+	# Transition to end screen after brief delay
+	var timer = get_tree().create_timer(1.5)
 	timer.timeout.connect(func():
-		can_activate = true
-		is_activated = false
-	) 
+		_go_to_end_screen()
+	)
+
+func _go_to_end_screen() -> void:
+	# TODO: Pass stats from Echo/Level if available
+	get_tree().change_scene_to_file("res://scenes/EndScreen.tscn") 
