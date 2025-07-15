@@ -1,23 +1,63 @@
 extends StaticBody2D
 
+signal melting_started
+signal melting_finished
+
 @export var melt_time: float = 1.0
+var is_melting := false
+var active_tween: Tween
+
 @onready var sprite: CanvasItem = $ColorRect
 @onready var area: Area2D = $Area2D
+@onready var collision_shape: CollisionShape2D = $CollisionShape2D
 
-func _ready():
-    area.body_entered.connect(_on_body_entered)
+func _ready() -> void:
+	area.body_entered.connect(_on_body_entered)
+	area.body_exited.connect(_on_body_exited)
+	
+	# Ensure collision is enabled at start
+	collision_shape.set_deferred("disabled", false)
+
+func handle_fire_form(body: Node2D) -> void:
+	if is_melting or not is_instance_valid(body):
+		return
+		
+	is_melting = true
+	emit_signal("melting_started")
+	
+	# Disable collision immediately to allow passage
+	collision_shape.set_deferred("disabled", true)
+	
+	# Create fade effect that continues after wall is gone
+	var fade := ColorRect.new()
+	fade.size = sprite.size
+	fade.position = sprite.position
+	fade.color = sprite.color
+	get_parent().add_child(fade)
+	
+	# Start fade on new rect and store the tween
+	active_tween = create_tween()
+	active_tween.tween_property(fade, "modulate:a", 0.0, melt_time)
+	active_tween.tween_callback(func():
+		fade.queue_free()
+		emit_signal("melting_finished")
+		queue_free()  # Remove wall after fade completes
+	)
+	
+	# Make original sprite invisible immediately
+	sprite.visible = false
 
 func _on_body_entered(body: Node) -> void:
-    if not body.has_method("get_current_form"):
-        return
-    if body.get_current_form() != body.Form.FIRE:
-        return
-    # Prevent double trigger
-    area.monitoring = false
-    # Fade out sprite over melt_time then remove collision and free
-    var tween := create_tween()
-    tween.tween_property(sprite, "modulate:a", 0.0, melt_time)
-    tween.tween_callback(self._finish_melt)
+	if not is_melting and body is CharacterBody2D and body.has_method("get_current_form"):
+		var form = body.get_current_form()
+		if form == ElementalForms.Form.FIRE:
+			handle_fire_form(body)
+		# Water form should not pass through - collision stays enabled
 
-func _finish_melt() -> void:
-    queue_free() 
+func _on_body_exited(_body: Node) -> void:
+	pass
+
+func _exit_tree() -> void:
+	# Cleanup active tween if it exists
+	if active_tween and active_tween.is_valid():
+		active_tween.kill() 

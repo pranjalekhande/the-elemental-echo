@@ -1,0 +1,28 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/magic-flame-effect.png" id="1_fire"]
+[ext_resource type="Texture2D" path="res://assets/elemental_absorption.png" id="2_water"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_echo"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_fire")
+}],
+"loop": true,
+"name": &"fire_idle",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_water")
+}],
+"loop": true,
+"name": &"water_idle",
+"speed": 8.0
+}]
+
+[node name="EchoAnimatedSprite" type="AnimatedSprite2D"]
+sprite_frames = SubResource("SpriteFrames_echo")
+animation = &"fire_idle"
+frame_progress = 0.65 
