@@ -1,13 +1,13 @@
 [gd_scene load_steps=14 format=3 uid="uid://b2fweyfpxssqg"]
 
-[ext_resource type="PackedScene" uid="uid://c258t6ukqdor4" path="res://scenes/Echo.tscn" id="1"]
+[ext_resource type="PackedScene" uid="uid://c258t6ukqdor4" path="res://scenes/player/Echo.tscn" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/components/CaveBackground.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/components/LevelBoundaries.tscn" id="3"]
-[ext_resource type="PackedScene" path="res://scenes/IceWall.tscn" id="4"]
-[ext_resource type="PackedScene" path="res://scenes/Heartspring.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/obstacles/IceWall.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/interactables/Heartspring.tscn" id="5"]
 [ext_resource type="Script" uid="uid://m6dd1yn8y6qe" path="res://src/entities/environment/TextTrigger.gd" id="6"]
-[ext_resource type="PackedScene" path="res://scenes/FireDiamond.tscn" id="7"]
-[ext_resource type="PackedScene" path="res://scenes/WaterDiamond.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://scenes/collectibles/FireDiamond.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/collectibles/WaterDiamond.tscn" id="8"]
 [ext_resource type="Script" uid="uid://b4376p8w1wjsv" path="res://src/levels/MainLevel.gd" id="9"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_large"]

@@ -42,4 +42,4 @@ func activate(echo: Node2D = null) -> void:
 
 func _go_to_end_screen() -> void:
 	# TODO: Pass stats from Echo/Level if available
-	get_tree().change_scene_to_file("res://scenes/EndScreen.tscn") 
+			get_tree().change_scene_to_file("res://scenes/ui/menus/EndScreen.tscn") 

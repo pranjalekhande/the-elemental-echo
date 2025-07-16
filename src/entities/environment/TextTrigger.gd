@@ -19,7 +19,7 @@ func _ready():
 	call_deferred("_setup_text_tag")
 
 func _setup_text_tag():
-	var text_tag_scene = preload("res://scenes/TextTag.tscn")
+	var text_tag_scene = preload("res://scenes/ui/components/TextTag.tscn")
 	text_tag = text_tag_scene.instantiate()
 	get_tree().current_scene.add_child(text_tag)
 

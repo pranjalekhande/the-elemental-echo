@@ -121,4 +121,23 @@ func get_diamond_color() -> Color:
 	return Color.WHITE
 
 func get_particle_color() -> Color:
-	return Color.WHITE 
+	return Color.WHITE
+
+func reset_diamond() -> void:
+	"""Reset diamond to uncollected state - used for level resets"""
+	is_collected = false
+	echo_in_range = null
+	compatible_form = false
+	
+	# Stop form checking timer
+	if form_check_timer:
+		form_check_timer.stop()
+	
+	# Restore visibility and collision
+	if sprite:
+		sprite.visible = true
+		sprite.modulate = Color.WHITE
+		sprite.scale = Vector2(1.0, 1.0)
+	
+	if collection_area:
+		collection_area.disabled = false 

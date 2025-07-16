@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=3 uid="uid://bkggsdr77coqf"]
+[gd_scene load_steps=47 format=3 uid="uid://sl6h3o30gsqa"]
 
 [ext_resource type="Texture2D" uid="uid://by0ceo70nlll8" path="res://assets/magic-flame-effect.png" id="1_fire"]
 [ext_resource type="Texture2D" uid="uid://74gfhmwiw2uh" path="res://assets/elemental_absorption.png" id="2_water"]
@@ -324,4 +324,4 @@ animations = [{
 position = Vector2(848, 336)
 sprite_frames = SubResource("SpriteFrames_echo")
 animation = &"fire_idle"
-frame_progress = 0.762331
+frame_progress = 0.0329969

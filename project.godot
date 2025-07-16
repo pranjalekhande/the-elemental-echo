@@ -11,13 +11,14 @@ config_version=5
 [application]
 
 config/name="The Elemental Echo"
-run/main_scene="res://scenes/StartMenu.tscn"
+run/main_scene="res://scenes/ui/menus/StartMenu.tscn"
 config/features=PackedStringArray("4.4", "Mobile")
 config/icon="res://icon.svg"
 
 [autoload]
 
 CollectionManager="*res://src/autoloads/CollectionManager.gd"
+ProgressManager="*res://src/autoloads/ProgressManager.gd"
 
 [rendering]
 

@@ -34,4 +34,12 @@ func get_health_percentage() -> float:
 	return float(current_health) / float(max_health)
 
 func is_low_health() -> bool:
-	return get_health_percentage() < 0.25 
+	return get_health_percentage() < 0.25
+
+func restore_full_health() -> void:
+	"""Restore health to maximum - used for level resets"""
+	if current_health < max_health:
+		var heal_amount = max_health - current_health
+		current_health = max_health
+		healed.emit(heal_amount)
+		health_changed.emit(current_health, max_health) 
