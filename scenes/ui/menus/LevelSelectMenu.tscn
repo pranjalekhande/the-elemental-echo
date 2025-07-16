@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://bhrujdyvj2mgo"]
+[gd_scene load_steps=3 format=3 uid="uid://bhrujdyvj2mgo"]
 
 [ext_resource type="Script" path="res://src/ui/menus/LevelSelectMenu.gd" id="1_2y4kv"]
+[ext_resource type="PackedScene" path="res://scenes/components/LevelBackground.tscn" id="2_background"]
 
 [node name="LevelSelectMenu" type="Control"]
 layout_mode = 3
@@ -9,12 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource("1_2y4kv")
 
-[node name="Background" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-color = Color(0.1, 0.1, 0.2, 1)
+[node name="Background" parent="." instance=ExtResource("2_background")]
 
 [node name="VBox" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -57,9 +53,9 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-columns = 3
-add_theme_constant_override("h_separation", 30)
-add_theme_constant_override("v_separation", 30)
+columns = 6
+add_theme_constant_override("h_separation", 20)
+add_theme_constant_override("v_separation", 20)
 
 [node name="Spacer3" type="Control" parent="VBox"]
 custom_minimum_size = Vector2(0, 20)

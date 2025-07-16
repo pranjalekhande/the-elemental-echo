@@ -25,6 +25,7 @@ func _ready() -> void:
 	
 	# Connect visibility signal to refresh menu when returning to it
 	visibility_changed.connect(_on_visibility_changed)
+	resized.connect(_on_menu_resized)
 	
 	# Connect button signals with null checks
 	if back_button:
@@ -42,12 +43,19 @@ func _ready() -> void:
 
 func _setup_menu() -> void:
 	"""Initialize the level selection menu"""
-	title_label.text = "Select Level"
+	if title_label:
+		title_label.text = "Select Level"
+	else:
+		print("ERROR: title_label is null!")
 	_create_level_cards()
 	_update_global_stats()
 
 func _create_level_cards() -> void:
 	"""Create level cards for all available levels"""
+	if not level_cards_container:
+		print("ERROR: level_cards_container is null!")
+		return
+		
 	# Clear existing cards
 	for card in level_cards:
 		if is_instance_valid(card):
@@ -69,6 +77,10 @@ func _create_level_cards() -> void:
 
 func _update_global_stats() -> void:
 	"""Update the global statistics display"""
+	if not stats_label:
+		print("ERROR: stats_label is null!")
+		return
+		
 	var global_stats = ProgressManager.get_global_stats()
 	var total_completions = global_stats.get("total_completions", 0)
 	var total_play_time = global_stats.get("total_play_time", 0.0)
@@ -175,4 +187,21 @@ func show_menu() -> void:
 func _on_visibility_changed() -> void:
 	"""Refresh data when menu becomes visible"""
 	if visible:
-		_refresh_level_cards() 
+		_refresh_level_cards()
+
+func _on_menu_resized() -> void:
+	"""Handle menu resize to adjust grid layout"""
+	if not level_cards_container:
+		return
+		
+	var menu_width = get_rect().size.x
+	var min_card_width = 120  # Minimum card width
+	var spacing = 20  # Horizontal spacing
+	var margins = 160  # Left and right margins
+	
+	# Calculate how many columns can fit
+	var available_width = menu_width - margins
+	var columns = max(1, int(available_width / (min_card_width + spacing)))
+	columns = min(columns, 6)  # Don't exceed 6 columns for readability
+	
+	level_cards_container.columns = columns 

@@ -1,24 +1,25 @@
-extends Control
+extends AspectRatioContainer
 class_name LevelCard
 
 # LevelCard - Reusable component for displaying level information and progress
 
 signal level_selected(level_id: String)
 
+@onready var level_graphic: Label = $VBox/LevelGraphic
 @onready var level_name_label: Label = $VBox/LevelName
-@onready var theme_label: Label = $VBox/Theme
-@onready var status_label: Label = $VBox/StatusContainer/StatusLabel
-@onready var best_time_label: Label = $VBox/StatsContainer/BestTimeLabel
-@onready var completion_label: Label = $VBox/StatsContainer/CompletionLabel
-@onready var play_button: Button = $VBox/PlayButton
 @onready var lock_overlay: Control = $LockOverlay
-@onready var progress_bar: ProgressBar = $VBox/ProgressBar
 
 var level_id: String = ""
 var level_data: Dictionary = {}
 
 func _ready() -> void:
-	play_button.pressed.connect(_on_play_button_pressed)
+	# Set minimum size for responsiveness
+	custom_minimum_size = Vector2(100, 120)
+	
+	# Make the whole card clickable
+	gui_input.connect(_on_card_clicked)
+	# Enable resizing notification
+	resized.connect(_on_card_resized)
 
 func setup_level_card(id: String) -> void:
 	"""Initialize card with level data"""
@@ -33,88 +34,66 @@ func _update_display() -> void:
 	# Simple level naming
 	var level_number = level_id.get_slice("_", 1)
 	level_name_label.text = "Level %s" % level_number
-	theme_label.text = level_def.get("name", "Unknown Level")
 	
-	# Status and availability
-	var status = level_data.get("status", "locked")
+	# Set graphics based on level and status
 	var is_unlocked = ProgressManager.is_level_unlocked(level_id)
 	var is_implemented = level_def.get("implemented", false)
+	var is_completed = level_data.get("total_completions", 0) > 0
 	
-	_update_status_display(status, is_unlocked, is_implemented)
-	_update_stats_display()
-	_update_progress_display()
-	_update_button_display(status, is_unlocked, is_implemented)
+	_update_graphics(level_number, is_unlocked, is_implemented, is_completed)
+	_update_lock_overlay(is_unlocked, is_implemented)
 
-func _update_status_display(status: String, is_unlocked: bool, is_implemented: bool) -> void:
-	"""Update status label and lock overlay"""
-	lock_overlay.visible = not is_unlocked or not is_implemented
+func _update_graphics(level_number: String, is_unlocked: bool, is_implemented: bool, is_completed: bool) -> void:
+	"""Update the level graphic based on state"""
+	var graphics = ["🔮", "⚡", "❄️", "🌱", "🌟", "💎"]  # Different graphic for each level
+	var level_num = int(level_number) - 1
 	
-	if not is_implemented:
-		status_label.text = "🚧 Coming Soon"
-		status_label.modulate = Color.ORANGE
-	elif not is_unlocked:
-		# Find which level needs to be completed to unlock this one
-		var level_def = level_data.get("level_definition", {})
-		var requirements = level_def.get("unlock_requirements", [])
-		if requirements.size() > 0:
-			var req_level = requirements[0]
-			var req_number = req_level.get_slice("_", 1)
-			status_label.text = "🔒 Complete Level %s" % req_number
+	if level_num >= 0 and level_num < graphics.size():
+		if not is_implemented:
+			level_graphic.text = "🚧"  # Construction for coming soon
+			level_graphic.modulate = Color.ORANGE
+		elif not is_unlocked:
+			level_graphic.text = "🔒"  # Lock for locked levels
+			level_graphic.modulate = Color.GRAY
+		elif is_completed:
+			level_graphic.text = graphics[level_num]
+			level_graphic.modulate = Color.GREEN  # Green tint for completed
 		else:
-			status_label.text = "🔒 Locked"
-		status_label.modulate = Color.GRAY
+			level_graphic.text = graphics[level_num]
+			level_graphic.modulate = Color.WHITE  # Normal for available
 	else:
-		match status:
-			"never_played":
-				status_label.text = "🆕 New"
-				status_label.modulate = Color.CYAN
-			"in_progress":
-				status_label.text = "⏳ In Progress"
-				status_label.modulate = Color.YELLOW
-			"completed":
-				status_label.text = "✅ Completed"
-				status_label.modulate = Color.GREEN
-			_:
-				status_label.text = "🆕 New"
-				status_label.modulate = Color.CYAN
+		level_graphic.text = "❓"
 
-func _update_stats_display() -> void:
-	"""Update best time and completion statistics"""
-	if level_data.get("total_completions", 0) > 0:
-		var best_time = level_data.get("best_time", 0.0)
-		best_time_label.text = "Best: %.1fs" % best_time
-		best_time_label.visible = true
+func _update_lock_overlay(is_unlocked: bool, is_implemented: bool) -> void:
+	"""Update lock overlay visibility"""
+	lock_overlay.visible = not is_unlocked or not is_implemented
+
+func _on_card_clicked(event: InputEvent) -> void:
+	"""Handle card click"""
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		var level_def = level_data.get("level_definition", {})
+		var is_unlocked = ProgressManager.is_level_unlocked(level_id)
+		var is_implemented = level_def.get("implemented", false)
 		
-		var completion_rate = level_data.get("completion_rate", 0.0)
-		completion_label.text = "Success: %.0f%%" % completion_rate
-		completion_label.visible = true
-	else:
-		best_time_label.visible = false
-		completion_label.visible = false
+		if is_unlocked and is_implemented:
+			level_selected.emit(level_id)
 
-func _update_progress_display() -> void:
-	"""Update progress bar based on completion percentage"""
-	var completion_rate = level_data.get("completion_rate", 0.0)
-	progress_bar.value = completion_rate
-	progress_bar.visible = level_data.get("total_attempts", 0) > 0
-
-func _update_button_display(_status: String, is_unlocked: bool, is_implemented: bool) -> void:
-	"""Update play button text and state"""
-	play_button.disabled = not is_unlocked or not is_implemented
+func _on_card_resized() -> void:
+	"""Handle card resize to scale fonts appropriately"""
+	var card_size = get_rect().size
+	var scale_factor = card_size.x / 150.0  # Base width scaling
 	
-	if not is_implemented:
-		play_button.text = "Coming Soon"
-	elif not is_unlocked:
-		play_button.text = "Locked"
-	elif level_data.get("total_completions", 0) == 0:
-		play_button.text = "Play"
-	else:
-		play_button.text = "Replay"
-
-func _on_play_button_pressed() -> void:
-	"""Handle play button click"""
-	if ProgressManager.is_level_unlocked(level_id):
-		level_selected.emit(level_id)
+	# Scale the graphic (emoji) font size
+	if level_graphic:
+		var base_graphic_size = 40
+		var scaled_size = int(base_graphic_size * scale_factor)
+		level_graphic.add_theme_font_size_override("font_size", max(scaled_size, 20))
+	
+	# Scale the level name font size
+	if level_name_label:
+		var base_name_size = 14
+		var scaled_size = int(base_name_size * scale_factor)
+		level_name_label.add_theme_font_size_override("font_size", max(scaled_size, 10))
 
 func refresh_display() -> void:
 	"""Refresh the card display with current data"""
