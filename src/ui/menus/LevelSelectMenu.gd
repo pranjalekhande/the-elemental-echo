@@ -35,8 +35,7 @@ func _ready() -> void:
 	
 	if reset_button:
 		reset_button.pressed.connect(_on_reset_button_pressed)
-	else:
-		print("ERROR: reset_button is null!")
+	# Reset button is optional in this menu
 	
 	ProgressManager.level_unlocked.connect(_on_level_unlocked)
 	_setup_menu()

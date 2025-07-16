@@ -20,6 +20,9 @@ var overlapping_ice_walls: Array[Node] = []
 @onready var health_label: Label = $UI/HealthBar/Label
 
 func _ready() -> void:
+	# Add Echo to player group for easy finding
+	add_to_group("player")
+	
 	last_position = position
 	_update_form_visual()
 	interaction_area.area_entered.connect(_on_area_entered)

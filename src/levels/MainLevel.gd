@@ -9,10 +9,18 @@ var initial_ice_wall_data: Dictionary = {}
 var echo_node: Node2D
 var level_boundaries: Node2D
 
+# Pause system
+var pause_menu: Control
+var pause_button: Button
+var is_paused: bool = false
+
 func _ready() -> void:
 	# Get reference to key nodes
 	echo_node = get_node("Echo")
 	level_boundaries = get_node("LevelBoundaries")
+	
+	# Setup pause menu
+	_setup_pause_menu()
 	
 	# Store initial level state before anything can be collected/destroyed
 	_store_initial_level_state()
@@ -39,6 +47,63 @@ func _ready() -> void:
 		CollectionManager.set_level_diamond_counts(fire_diamonds, water_diamonds)
 		
 		print("Level initialized with %d fire diamonds and %d water diamonds" % [fire_diamonds, water_diamonds])
+
+func _unhandled_input(event: InputEvent) -> void:
+	# Handle pause toggle (ESC key)
+	if event.is_action_pressed("ui_cancel"):
+		_toggle_pause()
+		get_viewport().set_input_as_handled()
+
+func _setup_pause_menu() -> void:
+	"""Setup the pause menu and button for this level"""
+	# Add pause menu
+	var pause_menu_scene = preload("res://scenes/ui/menus/PauseMenu.tscn")
+	pause_menu = pause_menu_scene.instantiate()
+	add_child(pause_menu)
+	
+	# Add pause button to UI layer
+	var ui_layer = get_node("UI")
+	if ui_layer:
+		var pause_button_scene = preload("res://scenes/ui/components/PauseButton.tscn")
+		pause_button = pause_button_scene.instantiate()
+		ui_layer.add_child(pause_button)
+		
+		# Connect pause button signal
+		pause_button.pause_requested.connect(_on_pause_button_pressed)
+	
+	# Connect pause menu signals
+	pause_menu.resume_requested.connect(_on_pause_resume)
+	pause_menu.exit_requested.connect(_on_pause_exit)
+
+func _toggle_pause() -> void:
+	"""Toggle pause state"""
+	if not is_paused:
+		_pause_game()
+	else:
+		_resume_game()
+
+func _pause_game() -> void:
+	"""Pause the game and show pause menu"""
+	is_paused = true
+	pause_menu.show_pause_menu()
+
+func _resume_game() -> void:
+	"""Resume the game and hide pause menu"""
+	is_paused = false
+	pause_menu.hide_pause_menu()
+
+func _on_pause_resume() -> void:
+	"""Handle resume from pause menu"""
+	_resume_game()
+
+func _on_pause_exit() -> void:
+	"""Handle exit from pause menu"""
+	# Menu already handles scene transition
+	print("Exiting to level select menu")
+
+func _on_pause_button_pressed() -> void:
+	"""Handle pause button press from UI"""
+	_pause_game()
 
 func _store_initial_level_state() -> void:
 	"""Store the initial positions and types of all resetable objects"""

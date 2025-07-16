@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3 uid="uid://bl8v2n1yha4k3"]
+
+[ext_resource type="Script" path="res://src/ui/components/PauseButton.gd" id="1"]
+
+[node name="PauseButton" type="Button"]
+custom_minimum_size = Vector2(60, 30)
+anchors_preset = 1
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 80.0
+offset_bottom = 50.0
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+text = "||"
+script = ExtResource("1")
+
+[connection signal="pressed" from="." to="." method="_on_pressed"] 
