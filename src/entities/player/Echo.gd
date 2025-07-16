@@ -11,13 +11,17 @@ var last_position := Vector2.ZERO
 var is_changing_form := false
 var overlapping_ice_walls: Array[Node] = []
 
-@onready var visual: Polygon2D = $Visual
+@onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite
 @onready var interaction_area: Area2D = $InteractionArea
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var health_component: HealthComponent = $HealthComponent
 @onready var health_bar_bg: ColorRect = $UI/HealthBar/Background
 @onready var health_bar_fg: ColorRect = $UI/HealthBar/ForegroundBar
 @onready var health_label: Label = $UI/HealthBar/Label
+
+# Animation state tracking
+var last_animation_name: String = ""
+var last_horizontal_input: float = 0.0
 
 func _ready() -> void:
 	# Add Echo to player group for easy finding
@@ -84,8 +88,10 @@ func get_current_form_enum() -> int:
 	return current_form
 
 func _update_form_visual() -> void:
-	visual.color = ElementalForms.get_form_color(current_form)
 	_update_health_bar_color()
+	# Force animation update when form changes
+	last_animation_name = ""
+	_update_movement_animation()
 
 func _physics_process(delta: float) -> void:
 	# Store position before move
@@ -97,6 +103,8 @@ func _physics_process(delta: float) -> void:
 	
 	# Handle horizontal movement (left/right input)
 	var horizontal_input := Input.get_axis("ui_left", "ui_right")
+	last_horizontal_input = horizontal_input  # Track for animation system
+	
 	if horizontal_input != 0:
 		velocity.x = horizontal_input * SPEED
 	else:
@@ -108,6 +116,9 @@ func _physics_process(delta: float) -> void:
 	
 	# Move the character
 	move_and_slide()
+	
+	# Update animations based on current state
+	_update_movement_animation()
 		
 	# Handle ice wall melting when moving into them
 	if current_form == 0:  # FIRE
@@ -127,6 +138,53 @@ func _on_area_entered(area: Area2D) -> void:
 func _on_area_exited(area: Area2D) -> void:
 	var parent = area.get_parent()
 	overlapping_ice_walls.erase(parent)
+
+# Animation System Methods
+func _get_animation_name(base_animation: String) -> String:
+	"""Get form-aware animation name"""
+	if current_form == ElementalForms.Form.WATER:
+		return "water_" + base_animation
+	return base_animation
+
+func _get_current_movement_state() -> String:
+	"""Determine current movement state from physics"""
+	# Priority: jump > fall > walk > idle
+	if velocity.y < -50:  # Going up with threshold for small fluctuations
+		return "jump"
+	elif velocity.y > 50 and not is_on_floor():  # Going down and not on ground
+		return "fall"
+	elif abs(last_horizontal_input) > 0.1 and is_on_floor():  # Moving horizontally on ground
+		return "walk_right" if last_horizontal_input > 0 else "walk_left"
+	else:
+		return "idle"
+
+func _update_movement_animation() -> void:
+	"""Update animation based on current movement and form"""
+	if not animated_sprite:
+		return
+		
+	var movement_state = _get_current_movement_state()
+	var animation_name = _get_animation_name(movement_state)
+	
+	# Only update if animation changed (performance optimization)
+	if animation_name != last_animation_name:
+		if animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation(animation_name):
+			animated_sprite.play(animation_name)
+			last_animation_name = animation_name
+		else:
+			push_warning("Animation not found: " + animation_name)
+	
+	# Handle sprite direction for walking animations
+	_handle_sprite_direction()
+
+func _handle_sprite_direction() -> void:
+	"""Manage sprite flipping based on movement direction"""
+	if not animated_sprite:
+		return
+		
+	# Only flip for horizontal movement to avoid flipping during jumps/falls
+	if abs(last_horizontal_input) > 0.1 and is_on_floor():
+		animated_sprite.flip_h = last_horizontal_input < 0
 
 # Health system methods
 func _on_health_changed(current_health: int, max_health: int) -> void:
@@ -158,22 +216,28 @@ func _on_damaged(_amount: int) -> void:
 
 func _show_healing_effect() -> void:
 	# Blue sparkle effect
+	if not animated_sprite:
+		return
+		
 	var tween = create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(visual, "modulate", Color.CYAN, 0.1)
+	tween.tween_property(animated_sprite, "modulate", Color.CYAN, 0.1)
 	tween.tween_callback(func(): 
 		var fade_tween = create_tween()
-		fade_tween.tween_property(visual, "modulate", Color.WHITE, 0.3)
+		fade_tween.tween_property(animated_sprite, "modulate", Color.WHITE, 0.3)
 	).set_delay(0.1)
 
 func _show_damage_effect() -> void:
 	# Red flash effect
+	if not animated_sprite:
+		return
+		
 	var tween = create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(visual, "modulate", Color.RED, 0.1)
+	tween.tween_property(animated_sprite, "modulate", Color.RED, 0.1)
 	tween.tween_callback(func(): 
 		var fade_tween = create_tween()
-		fade_tween.tween_property(visual, "modulate", Color.WHITE, 0.2)
+		fade_tween.tween_property(animated_sprite, "modulate", Color.WHITE, 0.2)
 	).set_delay(0.1)
 
 func _show_low_health_warning() -> void:

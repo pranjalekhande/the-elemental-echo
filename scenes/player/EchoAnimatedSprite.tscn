@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=3 uid="uid://sl6h3o30gsqa"]
+[gd_scene load_steps=47 format=3 uid="uid://jd1tajos7agj"]
 
 [ext_resource type="Texture2D" uid="uid://by0ceo70nlll8" path="res://assets/magic-flame-effect.png" id="1_fire"]
 [ext_resource type="Texture2D" uid="uid://74gfhmwiw2uh" path="res://assets/elemental_absorption.png" id="2_water"]
