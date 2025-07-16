@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=4 uid="uid://level_boundaries_component"]
 
-[ext_resource type="TileSet" uid="uid://modular_platform_tileset" path="res://resources/modular_platform_tileset.tres" id="1"]
-[ext_resource type="Script" path="res://src/LevelBoundaries.gd" id="2"]
+[ext_resource type="TileSet" uid="uid://j1iwarbb7tjq" path="res://resources/modular_platform_tileset.tres" id="1"]
+[ext_resource type="Script" path="res://src/entities/environment/LevelBoundaries.gd" id="2"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_invisible_wall"]
 size = Vector2(32, 2000)

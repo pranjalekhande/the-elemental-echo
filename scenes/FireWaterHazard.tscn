@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://dnmf52baka78r"]
 
 [ext_resource type="Texture2D" uid="uid://c2x5y8z1a4b7c0d3" path="res://assets/ground_tileset.png" id="1"]
-[ext_resource type="Script" path="res://src/FireWaterHazard.gd" id="2"]
+[ext_resource type="Script" path="res://src/entities/interactables/FireWaterHazard.gd" id="2"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hazard"]
 size = Vector2(64, 64)

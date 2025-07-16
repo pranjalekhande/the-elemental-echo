@@ -121,7 +121,7 @@ func _calculate_efficiency_bonus() -> int:
 	if excessive_switches == 0:
 		return efficiency_bonus_max
 	elif excessive_switches <= 3:
-		return efficiency_bonus_max / 2
+		return efficiency_bonus_max / 2.0  # Explicit float division
 	else:
 		return 0
 

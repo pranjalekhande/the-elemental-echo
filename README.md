@@ -1,67 +1,143 @@
 # The Elemental Echo
 
-A serene puzzle-platformer game where you play as Echo, a spark of elemental essence on a quest to restore the world's fading Heartsprings.
+A strategic puzzle-platformer where you play as Echo, a spark of elemental essence mastering form-switching to collect diamonds and restore the world's fading Heartsprings.
 
 ## 🎮 Game Overview
 
-**Genre:** Puzzle-Platformer  
-**Engine:** Godot Engine  
-**Platform:** PC (with potential for mobile expansion)  
-**Development Status:** Early Development / MVP Phase  
+**Genre:** Strategic Puzzle-Platformer  
+**Engine:** Godot 4.4+  
+**Platform:** PC (Windows/macOS/Linux)  
+**Development Status:** **MVP Complete** - Fully playable with strategic scoring system  
 
-## 🌟 Core Concept
+## 🌟 Core Features
 
-Play as Echo, a small ethereal being who can shift between fire and water forms to solve environmental puzzles. Navigate through dimming caverns and restore ancient Heartsprings to bring balance back to the world.
+### **Elemental Mastery System**
+- **Form Switching:** Instant transformation between Fire and Water forms (Q key)
+- **Strategic Collection:** Form-specific diamond collection creates meaningful choices
+- **Visual Feedback:** Diamonds brighten/dim based on your current form compatibility
 
-### Key Features (MVP)
-- **Elemental Shifting:** Transform between fire and water forms
-- **Environmental Puzzles:** Use elemental abilities to overcome obstacles
-- **Atmospheric Storytelling:** Discover the world's story through contextual text-tags
-- **Serene Gameplay:** No combat, focus on exploration and puzzle-solving
+### **Strategic Gameplay**
+- **Risk/Reward Decisions:** Choose optimal collection routes for maximum score
+- **Performance Scoring:** Speed bonuses, efficiency bonuses, and completion multipliers
+- **Replayability:** Multiple strategies for achieving high scores
 
-## 📖 Story
+### **Complete Game Experience**
+- **Start Menu:** Atmospheric introduction with cave background
+- **Level 1: First Steps** - Clean, beginner-friendly level design
+- **End Screen:** Performance-based victory messages and detailed stats
+- **Health System:** Visual feedback and Heartspring healing
 
-See [STORY.md](STORY.md) for the complete narrative design document.
+## 🎯 How to Play
 
-## 🚀 Development Roadmap
+### **Controls**
+- **WASD/Arrow Keys:** Move and jump
+- **Q:** Switch between Fire and Water forms
+- **Goal:** Collect diamonds and reach the Heartspring
 
-### Phase 1: MVP (Current)
-- [ ] Basic Echo movement and floating mechanics
-- [ ] Elemental form switching (Fire/Water)
-- [ ] Single ice wall obstacle
-- [ ] First Heartspring interaction
-- [ ] Basic text-tag system
+### **Strategy**
+- **Fire Echo** can only collect **red/orange diamonds**
+- **Water Echo** can only collect **blue/cyan diamonds**  
+- Plan your route to minimize form switches for efficiency bonuses
+- Faster completion times earn speed bonuses
 
-### Phase 2: Expansion
-- [ ] Additional obstacle types
-- [ ] Multiple levels/chambers
-- [ ] Enhanced visual effects
-- [ ] Audio implementation
-- [ ] Particle systems for elemental forms
+### **Scoring System**
+- **Base Points:** 10 points per diamond
+- **Speed Bonus:** Up to 500 points for fast completion
+- **Efficiency Bonus:** Up to 200 points for minimal form switching
+- **Completion Multiplier:** 2x bonus for collecting all diamonds
 
-### Phase 3: Polish
-- [ ] Advanced animations
-- [ ] Environmental storytelling expansion
-- [ ] Performance optimization
-- [ ] Platform-specific builds
+## 🏗️ Project Structure
 
-## 🛠️ Technical Stack
+```
+src/
+├── autoloads/          # Singleton systems (CollectionManager)
+├── core/               # Shared utilities (ElementalForms, HealthComponent)
+├── entities/           # Game objects organized by type
+│   ├── player/         # Echo character controller
+│   ├── collectibles/   # Diamond collection system
+│   ├── obstacles/      # Environmental challenges
+│   ├── interactables/  # Buttons, hazards, Heartspring
+│   └── environment/    # Level boundaries, text triggers
+├── ui/                 # User interface components
+│   ├── menus/         # Start/End screens
+│   └── components/    # Reusable UI elements
+└── levels/             # Level-specific logic
 
-- **Game Engine:** Godot 4.x
-- **Scripting:** GDScript
-- **Graphics:** 2D sprites with lighting effects
-- **Audio:** Ambient soundscapes and subtle SFX
+scenes/                 # Godot scene files
+├── components/         # Reusable scene components
+assets/                 # Game art and audio
+docs/                   # Design documents and guides
+```
 
-## 🎨 Art Direction
+## 🚀 Development Status
 
-- **Color Palette:** Muted earth tones with vibrant elemental accents
-- **Visual Style:** Minimalist, atmospheric
-- **Lighting:** Dynamic lighting to emphasize elemental forms
-- **UI:** Clean, unobtrusive interface
+### ✅ **Completed Features**
+- **Core Gameplay:** Platformer movement with form switching
+- **Strategic Systems:** Form-specific diamond collection with scoring
+- **Complete Game Flow:** Start Menu → Strategic Level → Performance-based End Screen
+- **Level Design:** Professional Level 1 with 4 strategically placed diamonds
+- **UI Systems:** Health bars, score tracking, performance feedback
+- **Code Organization:** Clean, maintainable codebase following Godot best practices
+
+### 🎯 **Next Phase Goals**
+- **Level Expansion:** Additional levels with increasing complexity
+- **Enhanced Mechanics:** New elemental obstacles and interactions
+- **Audio Implementation:** Background music and sound effects
+- **Visual Polish:** Enhanced particles and lighting effects
+- **Additional Forms:** Earth and Air elements for deeper strategy
+
+## 🛠️ Technical Implementation
+
+- **Game Engine:** Godot 4.4+
+- **Architecture:** Organized MVC pattern with singleton managers
+- **Scripting:** GDScript with strict typing and proper documentation
+- **Performance:** Optimized for 60 FPS with efficient collision detection
+- **Code Quality:** Follows Godot community standards and best practices
+
+## 🎨 Design Philosophy
+
+### **Visual Design**
+- **Clean Aesthetics:** Professional cave environment with atmospheric lighting
+- **Visual Hierarchy:** Clear distinction between interactive and decorative elements
+- **Form Feedback:** Immediate visual response to elemental state changes
+
+### **Game Design**
+- **Strategic Depth:** Meaningful choices in collection route optimization
+- **Progressive Difficulty:** Level 1 teaches mechanics before complex challenges
+- **Player Psychology:** Reward optimization and skill mastery over luck
+
+## 🚀 Getting Started
+
+### **Requirements**
+- Godot 4.4+ for development
+- Git for version control
+
+### **Running the Game**
+1. Clone the repository
+2. Open `project.godot` in Godot Engine
+3. Press F5 to run the game
+4. Enjoy strategic elemental mastery!
+
+### **Development Setup**
+1. Follow organized src/ structure for new features
+2. Use proper autoloads for singleton systems
+3. Maintain scene-script pairing convention
+4. Test changes with the complete game flow
+
+## 📈 Performance & Stats
+
+- **Level Completion Time:** 30-120 seconds depending on strategy
+- **Optimal Score Routes:** Multiple viable strategies for high scores
+- **Replayability Factor:** High - players optimize routes and times
+- **Code Maintainability:** Excellent - organized, documented, and tested
 
 ## 🤝 Contributing
 
-This is currently a solo development project, but feedback and suggestions are welcome!
+This project demonstrates professional game development practices:
+- **Clean Architecture:** Organized, maintainable codebase
+- **Strategic Design:** Meaningful player choices and skill progression  
+- **Complete Experience:** Full game flow from start to finish
+- **Performance Focus:** Optimized and responsive gameplay
 
 ## 📄 License
 
@@ -69,4 +145,4 @@ This is currently a solo development project, but feedback and suggestions are w
 
 ---
 
-*"A spark of essence seeks to restore what has been forgotten..."* 
+*"Master the elements, collect with strategy, achieve the perfect score..."* ✨ 

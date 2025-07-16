@@ -11,7 +11,9 @@ var has_triggered: bool = false
 var on_cooldown: bool = false
 
 func _ready():
-	body_entered.connect(_on_body_entered)
+	# Connect signal only if not already connected
+	if not body_entered.is_connected(_on_body_entered):
+		body_entered.connect(_on_body_entered)
 	
 	# Create text tag instance (deferred to avoid timing issues)
 	call_deferred("_setup_text_tag")

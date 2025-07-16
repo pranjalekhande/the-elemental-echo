@@ -17,7 +17,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-CollectionManager="*res://src/CollectionManager.gd"
+CollectionManager="*res://src/autoloads/CollectionManager.gd"
 
 [rendering]
 

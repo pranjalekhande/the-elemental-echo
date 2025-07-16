@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=4]
 
 [ext_resource type="PackedScene" path="res://scenes/components/CaveBackground.tscn" id="1"]
-[ext_resource type="Script" path="res://src/EndScreen.gd" id="2"]
+[ext_resource type="Script" path="res://src/ui/menus/EndScreen.gd" id="2"]
 
 [sub_resource type="Environment" id="Environment_victory"]
 background_mode = 1

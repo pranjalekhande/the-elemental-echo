@@ -6,7 +6,7 @@ extends CharacterBody2D
 const SPEED := 300.0
 const GRAVITY := 980.0  # Standard gravity (pixels per second²)
 const JUMP_SPEED := 600.0  # Upward velocity when jumping (increased for higher jumps)
-var current_form: ElementalForms.Form = ElementalForms.Form.FIRE
+var current_form: int = 0  # 0 = FIRE, 1 = WATER (ElementalForms.Form.FIRE/WATER)
 var last_position := Vector2.ZERO
 var is_changing_form := false
 var overlapping_ice_walls: Array[Node] = []
@@ -47,7 +47,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _toggle_form() -> void:
 	is_changing_form = true
-	current_form = ElementalForms.Form.WATER if current_form == ElementalForms.Form.FIRE else ElementalForms.Form.FIRE
+	current_form = 1 if current_form == 0 else 0  # Toggle between FIRE (0) and WATER (1)
 	_update_form_visual()
 	
 	# Track form switch for collection manager
@@ -55,7 +55,7 @@ func _toggle_form() -> void:
 		CollectionManager.track_form_switch()
 	
 	# If changing to fire form, check all overlapping ice walls
-	if current_form == ElementalForms.Form.FIRE:
+	if current_form == 0:  # FIRE
 		for wall in overlapping_ice_walls:
 			if is_instance_valid(wall) and wall.has_method("handle_fire_form"):
 				wall.handle_fire_form(self)
@@ -69,15 +69,15 @@ func _toggle_form() -> void:
 func get_current_form() -> String:
 	"""Return current form as string for diamond compatibility checking"""
 	match current_form:
-		ElementalForms.Form.FIRE:
+		0:  # FIRE
 			return "fire"
-		ElementalForms.Form.WATER:
+		1:  # WATER
 			return "water"
 		_:
 			return "unknown"
 
-func get_current_form_enum() -> ElementalForms.Form:
-	"""Return current form as enum for internal use"""
+func get_current_form_enum() -> int:
+	"""Return current form as integer for internal use"""
 	return current_form
 
 func _update_form_visual() -> void:
@@ -107,7 +107,7 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 		
 	# Handle ice wall melting when moving into them
-	if current_form == ElementalForms.Form.FIRE:
+	if current_form == 0:  # FIRE
 		for i in get_slide_collision_count():
 			var collision = get_slide_collision(i)
 			var collider = collision.get_collider()
@@ -118,7 +118,7 @@ func _on_area_entered(area: Area2D) -> void:
 	var parent = area.get_parent()
 	if parent.has_method("handle_fire_form"):
 		overlapping_ice_walls.append(parent)
-		if current_form == ElementalForms.Form.FIRE and not is_changing_form:
+		if current_form == 0 and not is_changing_form:  # FIRE
 			parent.handle_fire_form(self)
 
 func _on_area_exited(area: Area2D) -> void:

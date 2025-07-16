@@ -5,10 +5,10 @@
 [ext_resource type="PackedScene" path="res://scenes/components/LevelBoundaries.tscn" id="3"]
 [ext_resource type="PackedScene" path="res://scenes/IceWall.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/Heartspring.tscn" id="5"]
-[ext_resource type="Script" uid="uid://m6dd1yn8y6qe" path="res://src/TextTrigger.gd" id="6"]
+[ext_resource type="Script" uid="uid://m6dd1yn8y6qe" path="res://src/entities/environment/TextTrigger.gd" id="6"]
 [ext_resource type="PackedScene" path="res://scenes/FireDiamond.tscn" id="7"]
 [ext_resource type="PackedScene" path="res://scenes/WaterDiamond.tscn" id="8"]
-[ext_resource type="Script" uid="uid://b4376p8w1wjsv" path="res://src/MainLevel.gd" id="9"]
+[ext_resource type="Script" uid="uid://b4376p8w1wjsv" path="res://src/levels/MainLevel.gd" id="9"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_large"]
 size = Vector2(400, 32)

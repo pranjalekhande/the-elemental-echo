@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://c258t6ukqdor4"]
 
-[ext_resource type="Script" uid="uid://ddj76dh0xede3" path="res://src/Echo.gd" id="1"]
-[ext_resource type="Script" path="res://src/HealthComponent.gd" id="2"]
+[ext_resource type="Script" uid="uid://ddj76dh0xede3" path="res://src/entities/player/Echo.gd" id="1"]
+[ext_resource type="Script" path="res://src/core/HealthComponent.gd" id="2"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1"]
 radius = 12.0

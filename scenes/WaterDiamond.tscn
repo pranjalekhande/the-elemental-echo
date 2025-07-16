@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=4]
 
-[ext_resource type="Script" path="res://src/WaterDiamond.gd" id="1"]
+[ext_resource type="Script" path="res://src/entities/collectibles/WaterDiamond.gd" id="1"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_collection"]
 radius = 32.0

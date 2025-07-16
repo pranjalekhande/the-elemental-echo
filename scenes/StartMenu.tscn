@@ -1,7 +1,7 @@
-[gd_scene load_steps=5 format=4]
+[gd_scene load_steps=6 format=3 uid="uid://cyx6fnj1yha11"]
 
 [ext_resource type="PackedScene" path="res://scenes/components/CaveBackground.tscn" id="1"]
-[ext_resource type="Script" path="res://src/StartMenu.gd" id="2"]
+[ext_resource type="Script" uid="uid://cvmmypd6rywbo" path="res://src/ui/menus/StartMenu.gd" id="2"]
 
 [sub_resource type="Environment" id="Environment_menu"]
 background_mode = 1
@@ -9,6 +9,18 @@ background_color = Color(0.08, 0.1, 0.15, 1)
 ambient_light_source = 2
 ambient_light_color = Color(0.4, 0.5, 0.7, 1)
 ambient_light_energy = 0.2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
+bg_color = Color(0.3, 0.4, 0.6, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.8, 0.9, 1, 0.8)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button"]
 bg_color = Color(0.2, 0.3, 0.4, 0.8)
@@ -22,23 +34,13 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
-bg_color = Color(0.3, 0.4, 0.6, 0.9)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.8, 0.9, 1.0, 0.8)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-
 [node name="StartMenu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("2")
 
 [node name="CaveBackground" parent="." instance=ExtResource("1")]
@@ -51,6 +53,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="UI"]
 layout_mode = 1
@@ -63,6 +67,8 @@ offset_left = -200.0
 offset_top = -150.0
 offset_right = 200.0
 offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Title" type="Label" parent="UI/VBoxContainer"]
 layout_mode = 2
@@ -76,14 +82,14 @@ text = "A journey to restore the ancient Heartsprings"
 horizontal_alignment = 1
 
 [node name="Spacer" type="Control" parent="UI/VBoxContainer"]
-layout_mode = 2
 custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
 
 [node name="PlayButton" type="Button" parent="UI/VBoxContainer"]
-layout_mode = 2
 custom_minimum_size = Vector2(200, 50)
-theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+layout_mode = 2
 theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 text = "Begin Journey"
 
 [node name="Instructions" type="Label" parent="UI"]
@@ -97,8 +103,10 @@ offset_left = -200.0
 offset_top = -80.0
 offset_right = 200.0
 offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
 text = "WASD to move, Q to switch forms
 Touch the Heartspring to restore its power"
 horizontal_alignment = 1
 
-[connection signal="pressed" from="UI/VBoxContainer/PlayButton" to="." method="_on_play_button_pressed"] 
+[connection signal="pressed" from="UI/VBoxContainer/PlayButton" to="." method="_on_play_button_pressed"]
