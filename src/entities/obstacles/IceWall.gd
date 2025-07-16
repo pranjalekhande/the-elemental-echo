@@ -4,6 +4,7 @@ signal melting_started
 signal melting_finished
 
 @export var melt_time: float = 1.0
+@export var melt_delay: float = 0.3
 var is_melting := false
 var active_tween: Tween
 
@@ -25,13 +26,20 @@ func handle_fire_form(body: Node2D) -> void:
 	is_melting = true
 	emit_signal("melting_started")
 	
-	# Disable collision immediately to allow passage
+	# Add delay before melting starts
+	await get_tree().create_timer(melt_delay).timeout
+	
+	# Check if still valid after delay
+	if not is_instance_valid(self):
+		return
+	
+	# Disable collision to allow passage
 	collision_shape.set_deferred("disabled", true)
 	
 	# Create fade effect that continues after wall is gone
 	var fade := ColorRect.new()
 	fade.size = sprite.size
-	fade.position = sprite.position
+	fade.position = global_position + sprite.position
 	fade.color = sprite.color
 	get_parent().add_child(fade)
 	

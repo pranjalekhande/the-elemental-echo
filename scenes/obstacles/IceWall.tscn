@@ -6,7 +6,7 @@
 size = Vector2(64, 128)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2"]
-size = Vector2(128, 192)
+size = Vector2(70, 134)
 
 [node name="IceWall" type="StaticBody2D"]
 collision_layer = 2
