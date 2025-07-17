@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://c258t6ukqdor4"]
+[gd_scene load_steps=7 format=3 uid="uid://c258t6ukqdor4"]
 
 [ext_resource type="Script" uid="uid://ddj76dh0xede3" path="res://src/entities/player/Echo.gd" id="1"]
 [ext_resource type="Script" uid="uid://ct22reiy4cvnd" path="res://src/core/HealthComponent.gd" id="2"]
 [ext_resource type="PackedScene" uid="uid://bkggsdr77coqf" path="res://scenes/EchoAnimatedSprite.tscn" id="3"]
+[ext_resource type="PackedScene" uid="uid://c17cyesaepq3x" path="res://scenes/EchoBodyAnimatedSprite.tscn" id="4"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1"]
 radius = 12.0
@@ -16,19 +17,35 @@ script = ExtResource("1")
 
 [node name="AnimatedSprite" parent="." instance=ExtResource("3")]
 z_index = 10
-position = Vector2(0, 0)
+position = Vector2(0, -70)
+animation = &"idle"
+
+[node name="AnimatedSpriteBody" parent="." instance=ExtResource("4")]
+z_index = 9
+position = Vector2(0, 35)
 animation = &"idle"
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(1, 0)
+enabled = true
+current = true
+position = Vector2(0, -50)
+limit_left = -800
+limit_top = -500
+limit_right = 600
+limit_bottom = 500
+limit_smoothed = true
+position_smoothing_enabled = true
+position_smoothing_speed = 2.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 50)
 shape = SubResource("CircleShape2D_1")
 
 [node name="InteractionArea" type="Area2D" parent="."]
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionArea"]
+position = Vector2(0, 50)
 shape = SubResource("CircleShape2D_2")
 
 [node name="HealthComponent" type="Node" parent="."]

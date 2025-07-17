@@ -5,13 +5,14 @@ extends CharacterBody2D
 
 const SPEED := 300.0
 const GRAVITY := 980.0  # Standard gravity (pixels per second²)
-const JUMP_SPEED := 600.0  # Upward velocity when jumping (increased for higher jumps)
+const JUMP_SPEED := 800.0  # Upward velocity when jumping (scaled for level)
 var current_form: int = 0  # 0 = FIRE, 1 = WATER (ElementalForms.Form.FIRE/WATER)
 var last_position := Vector2.ZERO
 var is_changing_form := false
 var overlapping_ice_walls: Array[Node] = []
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite
+@onready var animated_sprite_body: AnimatedSprite2D = $AnimatedSpriteBody
 @onready var interaction_area: Area2D = $InteractionArea
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var health_component: HealthComponent = $HealthComponent
@@ -22,6 +23,15 @@ var overlapping_ice_walls: Array[Node] = []
 # Animation state tracking
 var last_animation_name: String = ""
 var last_horizontal_input: float = 0.0
+
+# Step separation system
+var step_timer: float = 0.0
+var step_alternate: bool = false
+var fire_body_position: Vector2 = Vector2(0, 35)  # Fire form - more separation
+var water_body_position: Vector2 = Vector2(0, 35)  # Water form - normal separation
+var step_offset_vertical: float = 4.0  # Reduced vertical movement during steps
+var step_offset_horizontal: float = 60.0  # Horizontal lean during walking
+var current_step_tween: Tween  # Track current tween to avoid conflicts
 
 func _ready() -> void:
 	# Add Echo to player group for easy finding
@@ -92,6 +102,10 @@ func _update_form_visual() -> void:
 	# Force animation update when form changes
 	last_animation_name = ""
 	_update_movement_animation()
+	
+	# Reset body position when changing forms to new form-specific position
+	if animated_sprite_body:
+		animated_sprite_body.position = _get_base_body_position()
 
 func _physics_process(delta: float) -> void:
 	# Store position before move
@@ -119,6 +133,9 @@ func _physics_process(delta: float) -> void:
 	
 	# Update animations based on current state
 	_update_movement_animation()
+	
+	# Update step separation effect
+	_update_step_separation(delta)
 		
 	# Handle ice wall melting when moving into them
 	if current_form == 0:  # FIRE
@@ -160,7 +177,7 @@ func _get_current_movement_state() -> String:
 
 func _update_movement_animation() -> void:
 	"""Update animation based on current movement and form"""
-	if not animated_sprite:
+	if not animated_sprite or not animated_sprite_body:
 		return
 		
 	var movement_state = _get_current_movement_state()
@@ -168,23 +185,83 @@ func _update_movement_animation() -> void:
 	
 	# Only update if animation changed (performance optimization)
 	if animation_name != last_animation_name:
+		# Update head animation
 		if animated_sprite.sprite_frames and animated_sprite.sprite_frames.has_animation(animation_name):
 			animated_sprite.play(animation_name)
-			last_animation_name = animation_name
 		else:
-			push_warning("Animation not found: " + animation_name)
+			push_warning("Head animation not found: " + animation_name)
+		
+		# Update body animation (same name, different sprite frames)
+		if animated_sprite_body.sprite_frames and animated_sprite_body.sprite_frames.has_animation(animation_name):
+			animated_sprite_body.play(animation_name)
+		else:
+			push_warning("Body animation not found: " + animation_name)
+		
+		last_animation_name = animation_name
 	
 	# Handle sprite direction for walking animations
 	_handle_sprite_direction()
 
 func _handle_sprite_direction() -> void:
 	"""Manage sprite flipping based on movement direction"""
-	if not animated_sprite:
+	if not animated_sprite or not animated_sprite_body:
 		return
 		
 	# Only flip for horizontal movement to avoid flipping during jumps/falls
 	if abs(last_horizontal_input) > 0.1 and is_on_floor():
-		animated_sprite.flip_h = last_horizontal_input < 0
+		var should_flip = last_horizontal_input < 0
+		animated_sprite.flip_h = should_flip
+		animated_sprite_body.flip_h = should_flip
+
+func _get_base_body_position() -> Vector2:
+	"""Get form-specific body position"""
+	if current_form == ElementalForms.Form.FIRE:
+		return fire_body_position
+	else:
+		return water_body_position
+
+func _update_step_separation(delta: float) -> void:
+	"""Create step separation effect during walking"""
+	if not animated_sprite_body:
+		return
+	
+	var is_walking = abs(last_horizontal_input) > 0.1 and is_on_floor()
+	var base_position = _get_base_body_position()
+	
+	if is_walking:
+		# Update step timer (controls rhythm of steps)
+		step_timer += delta * 12.0  # Speed of step alternation
+		
+		# Check if we should alternate step (roughly every 0.25 seconds)
+		if step_timer >= 3.0:
+			step_alternate = !step_alternate
+			step_timer = 0.0
+		
+		# Apply alternating vertical offset (reduced for subtlety)
+		var offset_y = step_offset_vertical if step_alternate else -step_offset_vertical
+		
+		# Apply horizontal lean based on walking direction
+		var offset_x = 0.0
+		if last_horizontal_input < 0:  # Walking left
+			offset_x = -step_offset_horizontal
+		elif last_horizontal_input > 0:  # Walking right
+			offset_x = step_offset_horizontal
+		
+		var target_position = base_position + Vector2(offset_x, offset_y)
+		
+		# Smooth transition to new position (avoid creating multiple tweens)
+		if current_step_tween:
+			current_step_tween.kill()
+		current_step_tween = create_tween()
+		current_step_tween.tween_property(animated_sprite_body, "position", target_position, 0.1)
+		
+	else:
+		# Reset to base position when not walking
+		if current_step_tween:
+			current_step_tween.kill()
+		current_step_tween = create_tween()
+		current_step_tween.tween_property(animated_sprite_body, "position", base_position, 0.2)
+		step_timer = 0.0
 
 # Health system methods
 func _on_health_changed(current_health: int, max_health: int) -> void:
@@ -216,28 +293,34 @@ func _on_damaged(_amount: int) -> void:
 
 func _show_healing_effect() -> void:
 	# Blue sparkle effect
-	if not animated_sprite:
+	if not animated_sprite or not animated_sprite_body:
 		return
 		
 	var tween = create_tween()
 	tween.set_parallel(true)
 	tween.tween_property(animated_sprite, "modulate", Color.CYAN, 0.1)
+	tween.tween_property(animated_sprite_body, "modulate", Color.CYAN, 0.1)
 	tween.tween_callback(func(): 
 		var fade_tween = create_tween()
+		fade_tween.set_parallel(true)
 		fade_tween.tween_property(animated_sprite, "modulate", Color.WHITE, 0.3)
+		fade_tween.tween_property(animated_sprite_body, "modulate", Color.WHITE, 0.3)
 	).set_delay(0.1)
 
 func _show_damage_effect() -> void:
 	# Red flash effect
-	if not animated_sprite:
+	if not animated_sprite or not animated_sprite_body:
 		return
 		
 	var tween = create_tween()
 	tween.set_parallel(true)
 	tween.tween_property(animated_sprite, "modulate", Color.RED, 0.1)
+	tween.tween_property(animated_sprite_body, "modulate", Color.RED, 0.1)
 	tween.tween_callback(func(): 
 		var fade_tween = create_tween()
+		fade_tween.set_parallel(true)
 		fade_tween.tween_property(animated_sprite, "modulate", Color.WHITE, 0.2)
+		fade_tween.tween_property(animated_sprite_body, "modulate", Color.WHITE, 0.2)
 	).set_delay(0.1)
 
 func _show_low_health_warning() -> void:

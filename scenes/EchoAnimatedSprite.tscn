@@ -680,4 +680,3 @@ animations = [{
 position = Vector2(400, 300)
 sprite_frames = SubResource("SpriteFrames_fire_echo")
 animation = &"water_walk_left"
-frame_progress = 0.257092

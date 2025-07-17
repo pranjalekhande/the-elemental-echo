@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cbss87b7xk5lc"
-path="res://.godot/imported/platformerPack_character.png-b980ac2e92b0d9489fe95f0cfb6b85bd.ctex"
+uid="uid://baqa37qy7ccdc"
+path="res://.godot/imported/level1.png-4875ad602f162dce6259b8c233f52d93.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Spritesheet/platformerPack_character.png"
-dest_files=["res://.godot/imported/platformerPack_character.png-b980ac2e92b0d9489fe95f0cfb6b85bd.ctex"]
+source_file="res://assets/levels/level1.png"
+dest_files=["res://.godot/imported/level1.png-4875ad602f162dce6259b8c233f52d93.ctex"]
 
 [params]
 

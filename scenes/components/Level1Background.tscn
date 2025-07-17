@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://level1_background_component"]
+
+[ext_resource type="Texture2D" path="res://assets/levels/level1.png" id="1_level1_bg"]
+
+[node name="Level1Background" type="Node2D"]
+z_index = -100
+
+[node name="BackgroundImage" type="Sprite2D" parent="."]
+position = Vector2(-100, -50)
+scale = Vector2(8, 8)
+texture = ExtResource("1_level1_bg")
+centered = true 
