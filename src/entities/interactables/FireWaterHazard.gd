@@ -36,6 +36,6 @@ func _on_body_entered(body):
 			var health_component = body.get_node("HealthComponent")
 			if health_component and health_component.has_method("take_damage"):
 				health_component.take_damage(damage_amount)
-				print("Echo took damage from ", "fire" if hazard_type == HazardType.FIRE else "water", " hazard!")
+		
 		else:
-			print("Echo is safe in this hazard (correct elemental form)") 
+			pass

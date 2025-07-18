@@ -15,8 +15,7 @@ var pause_button: Button
 var is_paused: bool = false
 
 func _ready() -> void:
-	# IMMEDIATE DEBUG - Verify script is running
-	print("🚀 MainLevel script _ready() called!")
+	# Script initialization
 	
 	# Start background music for level
 	if AudioManager:
@@ -26,8 +25,7 @@ func _ready() -> void:
 	echo_node = get_node("Echo")
 	level_boundaries = get_node("LevelBoundaries")
 	
-	print("🔍 Echo node found: ", echo_node != null)
-	print("🔍 LevelBoundaries node found: ", level_boundaries != null)
+
 	
 	# Setup pause menu
 	_setup_pause_menu()
@@ -56,7 +54,7 @@ func _ready() -> void:
 		# Set diamond counts in collection manager
 		CollectionManager.set_level_diamond_counts(fire_diamonds, water_diamonds)
 		
-		print("Level initialized with %d fire diamonds and %d water diamonds" % [fire_diamonds, water_diamonds])
+	
 
 func _unhandled_input(event: InputEvent) -> void:
 	# Handle pause toggle (ESC key)
@@ -109,7 +107,7 @@ func _on_pause_resume() -> void:
 func _on_pause_exit() -> void:
 	"""Handle exit from pause menu"""
 	# Menu already handles scene transition
-	print("Exiting to level select menu")
+
 
 func _on_pause_button_pressed() -> void:
 	"""Handle pause button press from UI"""
@@ -140,11 +138,11 @@ func _store_initial_level_state() -> void:
 			"scene_path": ice_wall.scene_file_path if ice_wall.scene_file_path else "res://scenes/obstacles/IceWall.tscn"
 		}
 	
-	print("Stored initial state: %d diamonds, %d ice walls" % [initial_diamond_data.size(), 1 if not initial_ice_wall_data.is_empty() else 0])
+
 
 func _on_player_died(player: Node2D) -> void:
 	"""Called when Echo dies - reset the entire level to initial state"""
-	print("Echo died! Resetting level to initial state...")
+
 	
 	# Defer all reset operations to avoid physics conflicts
 	call_deferred("_perform_level_reset")
@@ -200,7 +198,7 @@ func _reset_diamonds() -> void:
 				diamonds_node.add_child(diamond_instance)
 				created_count += 1
 	
-	print("Reset %d diamonds, created %d missing diamonds" % [reset_count, created_count])
+
 
 func _reset_ice_walls() -> void:
 	"""Remove existing ice wall and recreate from initial state"""
@@ -219,7 +217,7 @@ func _reset_ice_walls() -> void:
 		ice_wall_instance.position = initial_ice_wall_data.position
 		add_child(ice_wall_instance)
 		
-		print("Reset ice wall")
+	
 
 func _reset_game_systems() -> void:
 	"""Reset CollectionManager and other game systems"""
@@ -237,7 +235,7 @@ func _reset_game_systems() -> void:
 				water_count += 1
 		
 		CollectionManager.set_level_diamond_counts(fire_count, water_count)
-		print("Reset CollectionManager - %d fire, %d water diamonds available" % [fire_count, water_count])
+	
 
 func _reset_echo_health() -> void:
 	"""Reset Echo's health to full"""
@@ -249,7 +247,7 @@ func _reset_echo_health() -> void:
 			# Fallback: heal a large amount
 			echo_node.heal(100)
 		
-		print("Reset Echo's health to full")
+	
 
 func _count_diamonds_recursive(node: Node) -> Array:
 	"""Recursively count diamonds in nested chamber structure"""

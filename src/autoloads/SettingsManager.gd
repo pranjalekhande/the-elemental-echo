@@ -30,9 +30,7 @@ func _ready() -> void:
 	# Apply loaded settings to audio system
 	_apply_audio_settings()
 	
-	print("🔧 SettingsManager initialized")
-	print("   SFX Volume: %.1f%% | Enabled: %s" % [sfx_volume * 100, sfx_enabled])
-	print("   Music Volume: %.1f%% | Enabled: %s" % [music_volume * 100, music_enabled])
+
 
 func _setup_audio_buses() -> void:
 	"""Create audio buses for SFX and Music if they don't exist"""
@@ -51,12 +49,12 @@ func _setup_audio_buses() -> void:
 		AudioServer.set_bus_name(2, "Music")
 		AudioServer.set_bus_send(2, "Master")
 	
-	print("🔊 Audio buses configured: Master, SFX, Music")
+
 
 func load_settings() -> void:
 	"""Load settings from persistent storage"""
 	if not FileAccess.file_exists(SETTINGS_FILE_PATH):
-		print("🔧 No settings file found, using defaults")
+	
 		save_settings()  # Create default settings file
 		return
 	
@@ -83,7 +81,7 @@ func load_settings() -> void:
 	sfx_enabled = data.get("sfx_enabled", true)
 	music_enabled = data.get("music_enabled", true)
 	
-	print("✅ Settings loaded successfully")
+
 
 func save_settings() -> void:
 	"""Save current settings to persistent storage"""
@@ -105,7 +103,7 @@ func save_settings() -> void:
 	file.store_string(json_string)
 	file.close()
 	
-	print("💾 Settings saved successfully")
+
 
 # Audio Control Methods
 func set_sfx_volume(volume: float) -> void:
@@ -176,7 +174,7 @@ func reset_to_defaults() -> void:
 	music_enabled = true
 	_apply_audio_settings()
 	save_settings()
-	print("🔄 Settings reset to defaults")
+
 
 # Player Name Integration (delegates to ProgressManager)
 func get_player_name() -> String:
@@ -185,11 +183,11 @@ func get_player_name() -> String:
 		return ProgressManager.get_player_name()
 	return ""
 
-func set_player_name(name: String) -> void:
+func set_player_name(player_name: String) -> void:
 	"""Set player name via ProgressManager"""
 	if ProgressManager:
-		ProgressManager.set_player_name(name)
-		print("👤 Player name updated: '%s'" % name)
+		ProgressManager.set_player_name(player_name)
+	
 
 func has_player_name() -> bool:
 	"""Check if player has set a name"""

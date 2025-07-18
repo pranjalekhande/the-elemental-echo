@@ -16,16 +16,15 @@ var leaderboard: Array = [] # Array of {"name": String, "points": int, "date": S
 func _ready() -> void:
 	# Load existing data (host or standalone). Clients keep empty list.
 	_load_file()
-	# Debug: Show where the leaderboard file is located
-	_print_file_location_debug()
 
-func add_score(name: String, points: int) -> void:
+
+func add_score(player_name: String, points: int) -> void:
 	"""Host: add a new score, update file & broadcast."""
 	if not _is_host():
 		return # Only host should mutate
 
 	leaderboard.append({
-		"name": name,
+		"name": player_name,
 		"points": points,
 		"date": Time.get_datetime_string_from_system()
 	})
@@ -39,45 +38,28 @@ func add_score(name: String, points: int) -> void:
 	_broadcast_leaderboard()
 
 # Bypass host check for local-only sessions
-func add_score_force(name: String, points: int) -> void:
-	print("🔥 add_score_force called with name='%s', points=%d" % [name, points])
-	print("🔍 Current leaderboard size before adding: %d" % leaderboard.size())
-	
+func add_score_force(player_name: String, points: int) -> void:
 	leaderboard.append({
-		"name": name,
+		"name": player_name,
 		"points": points,
 		"date": Time.get_datetime_string_from_system()
 	})
-	print("📋 Score added to leaderboard array (size now: %d)" % leaderboard.size())
-	print("🎯 Added entry: name='%s', points=%d, date='%s'" % [name, points, Time.get_datetime_string_from_system()])
 	
 	# Sort descending by points
 	leaderboard.sort_custom(func(a, b): return a["points"] > b["points"])
-	print("📊 Leaderboard sorted by points")
-	
-	# Print current leaderboard contents for debugging
-	print("📜 Current leaderboard contents:")
-	for i in range(min(leaderboard.size(), 5)):  # Show top 5 for debugging
-		var entry = leaderboard[i]
-		print("   %d. %s - %d points" % [i+1, entry.get("name", "?"), entry.get("points", 0)])
 	
 	# Trim to top N
 	if leaderboard.size() > TOP_N:
 		leaderboard = leaderboard.slice(0, TOP_N)
-		print("✂️ Leaderboard trimmed to top %d entries" % TOP_N)
 	
-	print("💾 Calling _save_file()...")
 	_save_file()
-	print("📡 Calling _broadcast_leaderboard()...")
 	_broadcast_leaderboard()
 
 func clear_leaderboard() -> void:
 	"""Debug method to clear all leaderboard entries"""
-	print("🗑️ Clearing leaderboard...")
 	leaderboard.clear()
 	_save_file()
 	_broadcast_leaderboard()
-	print("✅ Leaderboard cleared")
 
 func _broadcast_leaderboard() -> void:
 	leaderboard_updated.emit(leaderboard)
@@ -115,25 +97,25 @@ func _save_file() -> void:
 		f.store_string(JSON.stringify(leaderboard))
 		f.close()
 		var absolute_path = ProjectSettings.globalize_path(FILE_PATH)
-		print("💾 Leaderboard saved successfully!")
-		print("   File: ", absolute_path)
-		print("   Entries: ", leaderboard.size())
+
 		
 		# Verify the file was actually written
 		if FileAccess.file_exists(FILE_PATH):
 			var file_size = FileAccess.get_file_as_bytes(FILE_PATH).size()
-			print("✅ File verification: exists, size: %d bytes" % file_size)
+	
 			
 			# Read back and verify content
 			var verify_file = FileAccess.open(FILE_PATH, FileAccess.READ)
 			if verify_file:
 				var content = verify_file.get_as_text()
 				verify_file.close()
-				print("📄 File content preview: %s..." % content.substr(0, 100))
+		
 			else:
-				print("⚠️ Could not read back saved file for verification")
+				pass
+		
 		else:
-			print("❌ File verification FAILED - file does not exist after save!")
+			pass
+	
 	else:
 		var error = FileAccess.get_open_error()
 		print("❌ Failed to save leaderboard file: ", error)
@@ -154,7 +136,4 @@ func _is_host() -> bool:
 func _print_file_location_debug() -> void:
 	"""Print debug information about where the leaderboard file is stored"""
 	var absolute_path = ProjectSettings.globalize_path(FILE_PATH)
-	print("📁 Leaderboard file location:")
-	print("   Resource path: ", FILE_PATH)
-	print("   Absolute path: ", absolute_path)
-	print("   File exists: ", FileAccess.file_exists(FILE_PATH)) 
+ 

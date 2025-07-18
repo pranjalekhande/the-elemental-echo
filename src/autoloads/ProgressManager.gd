@@ -78,7 +78,7 @@ func load_progress() -> void:
 			if parse_result == OK:
 				save_data = json.data
 				device_id = save_data.get("device_id", "")
-				print("Progress loaded successfully")
+	
 			else:
 				print("Failed to parse save data, creating new save")
 				_create_new_save()
@@ -103,7 +103,7 @@ func save_progress() -> void:
 		file.store_string(json_string)
 		file.close()
 		progress_saved.emit()
-		print("Progress saved successfully")
+
 	else:
 		print("Failed to save progress data")
 
@@ -322,21 +322,21 @@ func get_available_levels() -> Array:
 
 func reset_all_progress() -> void:
 	"""Reset all progress data - useful for testing"""
-	print("Resetting all progress data...")
+
 	_create_new_save()
 	save_progress()
-	print("Progress reset complete") 
+ 
 
 func get_player_name() -> String:
 	"""Get the stored player name"""
 	return save_data.get("player_name", "")
 
-func set_player_name(name: String) -> void:
+func set_player_name(player_name: String) -> void:
 	"""Set and save the player name"""
-	var cleaned_name = name.strip_edges()
+	var cleaned_name = player_name.strip_edges()
 	save_data["player_name"] = cleaned_name
 	save_progress()
-	print("✅ Player name saved: '%s'" % cleaned_name)
+
 
 func has_player_name() -> bool:
 	"""Check if a player name has been set"""

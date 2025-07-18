@@ -35,11 +35,10 @@ func _find_spawn_point() -> void:
 		var echo = parent_scene.find_child("Echo")
 		if echo:
 			player_spawn_point = echo.global_position
-			print("🎯 Player spawn point set to: ", player_spawn_point)
+	
 
 func _on_death_zone_entered(body: Node2D) -> void:
 	if body.name == "Echo":
-		print("Player fell off the level - respawning")
 		_respawn_player(body)
 
 func _respawn_player(player: Node2D) -> void:
@@ -80,20 +79,18 @@ func add_platform_tiles(layer_name: String, tile_positions: Array, tile_id: Vect
 		print("Warning: MainTileMap not found in LevelBoundaries")
 		return
 	
-	print("🔧 Adding ", tile_positions.size(), " tiles to layer: ", layer_name)
+
 	
 	# Access the layer directly as a child of MainTileMap
 	var layer = tilemap.get_node(layer_name + "Layer")
 	if layer:
-		print("✅ Found layer: ", layer_name + "Layer")
+
 		for pos in tile_positions:
 			layer.set_cell(pos, 0, tile_id)
-			print("   🔹 Placed tile at: ", pos, " with ID: ", tile_id)
+
 	else:
 		print("❌ Warning: Layer '", layer_name + "Layer", "' not found in MainTileMap")
-		print("📋 Available children:")
-		for child in tilemap.get_children():
-			print("   - ", child.name)
+
 
 func add_wall_tiles(tile_positions: Array, tile_id: Vector2i = Vector2i(0, 1)) -> void:
 	"""Add wall tiles for solid boundaries"""

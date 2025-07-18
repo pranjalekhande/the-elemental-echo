@@ -17,7 +17,6 @@ func open_door():
 		# Make door transparent and disable collision
 		sprite.modulate = Color(0.5, 0.3, 0.2, 0.3)
 		collision.disabled = true
-		print("Door opened!")
 
 func close_door():
 	if is_open:
@@ -25,4 +24,3 @@ func close_door():
 		# Restore door appearance and enable collision
 		sprite.modulate = Color(0.5, 0.3, 0.2, 1.0)
 		collision.disabled = false
-		print("Door closed!") 

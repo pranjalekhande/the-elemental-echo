@@ -51,7 +51,7 @@ func _ready() -> void:
 		# Set diamond counts in collection manager
 		CollectionManager.set_level_diamond_counts(fire_diamonds, water_diamonds)
 		
-		print("Level 2 initialized with %d fire diamonds and %d water diamonds" % [fire_diamonds, water_diamonds])
+	
 
 func _unhandled_input(event: InputEvent) -> void:
 	# Handle pause toggle (ESC key)
@@ -104,7 +104,7 @@ func _on_pause_resume() -> void:
 func _on_pause_exit() -> void:
 	"""Handle exit from pause menu"""
 	# Menu already handles scene transition
-	print("Exiting to level select menu")
+
 
 func _on_pause_button_pressed() -> void:
 	"""Handle pause button press from UI"""
@@ -143,11 +143,11 @@ func _store_initial_level_state() -> void:
 			"position": moving_platform.position
 		}
 	
-	print("Level 2 - Stored initial state: %d diamonds, %d ice walls, %d moving platforms" % [initial_diamond_data.size(), 1 if not initial_ice_wall_data.is_empty() else 0, 1 if not initial_moving_platform_data.is_empty() else 0])
+
 
 func _on_player_died(player: Node2D) -> void:
 	"""Called when Echo dies - reset the entire level to initial state"""
-	print("Echo died! Resetting Level 2 to initial state...")
+
 	
 	# Defer all reset operations to avoid physics conflicts
 	call_deferred("_perform_level_reset")
@@ -206,7 +206,7 @@ func _reset_diamonds() -> void:
 				diamonds_node.add_child(diamond_instance)
 				created_count += 1
 	
-	print("Level 2 - Reset %d diamonds, created %d missing diamonds" % [reset_count, created_count])
+
 
 func _reset_ice_walls() -> void:
 	"""Remove existing ice wall and recreate from initial state"""
@@ -225,14 +225,14 @@ func _reset_ice_walls() -> void:
 		ice_wall_instance.position = initial_ice_wall_data.position
 		add_child(ice_wall_instance)
 		
-		print("Level 2 - Reset ice wall")
+	
 
 func _reset_moving_platforms() -> void:
 	"""Reset MovingPlatform to initial state"""
 	var moving_platform = get_node("MovingPlatform")
 	if moving_platform and moving_platform.has_method("reset_platform"):
 		moving_platform.reset_platform()
-		print("Level 2 - Reset moving platform")
+	
 
 func _reset_game_systems() -> void:
 	"""Reset CollectionManager and other game systems"""
@@ -250,7 +250,7 @@ func _reset_game_systems() -> void:
 				water_count += 1
 		
 		CollectionManager.set_level_diamond_counts(fire_count, water_count)
-		print("Level 2 - Reset CollectionManager - %d fire, %d water diamonds available" % [fire_count, water_count])
+	
 
 func _reset_echo_health() -> void:
 	"""Reset Echo's health to full"""
@@ -262,7 +262,7 @@ func _reset_echo_health() -> void:
 			# Fallback: heal a large amount
 			echo_node.heal(100)
 		
-		print("Level 2 - Reset Echo's health to full")
+	
 
 func _count_diamonds_recursive(node: Node) -> Array:
 	"""Recursively count diamonds in nested chamber structure"""

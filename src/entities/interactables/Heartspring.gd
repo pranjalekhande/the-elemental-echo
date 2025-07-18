@@ -35,7 +35,7 @@ func activate(echo: Node2D = null) -> void:
 	if AudioManager:
 		AudioManager.level_complete_sfx.play()
 	
-	print("Heartspring activated! Healing provided.")
+
 	
 	# Transition to end screen after brief delay
 	var timer = get_tree().create_timer(1.5)
@@ -46,5 +46,5 @@ func activate(echo: Node2D = null) -> void:
 func _go_to_end_screen() -> void:
 	# Log current score before transition
 	if CollectionManager:
-		print("🎯 Heartspring transitioning to EndScreen - Current score: ", CollectionManager.current_score)
+		pass
 	get_tree().change_scene_to_file("res://scenes/ui/menus/EndScreen.tscn") 

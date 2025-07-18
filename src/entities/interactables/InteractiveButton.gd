@@ -26,14 +26,14 @@ func _press_button():
 	# Change sprite to pressed state (adjust region_rect for pressed button sprite)
 	sprite.region_rect = Rect2(148, 100, 48, 48)  # Pressed button sprite
 	button_pressed.emit()
-	print("Button pressed!")
+
 
 func _release_button():
 	is_pressed = false
 	# Change sprite back to unpressed state
 	sprite.region_rect = Rect2(100, 100, 48, 48)  # Unpressed button sprite
 	button_released.emit()
-	print("Button released!")
+
 
 func get_is_pressed() -> bool:
 	return is_pressed 

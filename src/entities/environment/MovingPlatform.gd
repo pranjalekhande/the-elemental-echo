@@ -63,7 +63,7 @@ func reset_platform() -> void:
 	# Restart movement cycle
 	_start_movement_cycle()
 	
-	print("MovingPlatform reset to initial state")
+
 
 func _start_movement_cycle() -> void:
 	"""Start the movement state machine cycle"""
@@ -126,13 +126,11 @@ func _on_body_entered(body: Node2D) -> void:
 	"""Player or other body entered the carry detection area"""
 	if body is CharacterBody2D and not body in carried_bodies:
 		carried_bodies.append(body)
-		print("MovingPlatform: Carrying ", body.name)
 
 func _on_body_exited(body: Node2D) -> void:
 	"""Player or other body exited the carry detection area"""
 	if body in carried_bodies:
 		carried_bodies.erase(body)
-		print("MovingPlatform: Released ", body.name)
 
 # Public interface for getting platform state (useful for debugging/testing)
 func get_current_state() -> State:

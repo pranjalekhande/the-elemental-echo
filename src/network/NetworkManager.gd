@@ -27,9 +27,9 @@ func _ready() -> void:
 # ---------------------------
 # Public API
 # ---------------------------
-func set_player_name(name: String) -> void:
+func set_player_name(player_name: String) -> void:
 	"""Store the local player name before hosting / joining."""
-	player_name = name.strip_edges()
+	player_name = player_name.strip_edges()
 
 func start_host(port: int = DEFAULT_PORT) -> void:
 	"""Create an ENet server and become the session host."""
@@ -44,7 +44,7 @@ func start_host(port: int = DEFAULT_PORT) -> void:
 
 	# Host registers itself with peer ID 1
 	players[1] = player_name if player_name != "" else "Host"
-	print("✅ Hosting on port %d as '%s'" % [port, players[1]])
+
 
 	_connect_signals()
 
@@ -86,15 +86,15 @@ func _connect_signals() -> void:
 func _on_peer_connected(id: int) -> void:
 	if is_host:
 		# Newly connected peers will send their name via RPC after handshake.
-		print("🔌 Peer connected: ", id)
+		pass
 
 func _on_peer_disconnected(id: int) -> void:
-	print("⚠️ Peer disconnected: ", id)
+
 	players.erase(id)
 	peer_left.emit(id)
 
 func _on_connected_to_server() -> void:
-	print("✅ Connected to host. Registering name…")
+
 	if player_name == "":
 		player_name = "Player_%d" % multiplayer.get_unique_id()
 	rpc_id(1, "_rpc_register_name", player_name)
@@ -103,30 +103,31 @@ func _on_connected_to_server() -> void:
 # RPCs (always received by host)
 # ---------------------------
 @rpc("any_peer", "reliable")
-func _rpc_register_name(name: String) -> void:
+func _rpc_register_name(player_name: String) -> void:
 	"""Client → Host: register chosen player name."""
 	if not is_host:
 		return  # Only host should execute this body
 	var sender_id := multiplayer.get_remote_sender_id()
-	players[sender_id] = name
-	print("👤 Registered peer %d as '%s'" % [sender_id, name])
-	peer_registered.emit(sender_id, name)
+	players[sender_id] = player_name
+
+	peer_registered.emit(sender_id, player_name)
 
 @rpc("any_peer", "reliable")
-func _rpc_submit_score(name: String, points: int) -> void:
+func _rpc_submit_score(player_name: String, points: int) -> void:
 	"""Client → Host: submit final score for leaderboard."""
 	if not is_host:
 		return
 	var sender_id := multiplayer.get_remote_sender_id()
-	_on_score_submitted(sender_id, name, points)
+	_on_score_submitted(sender_id, player_name, points)
 	# Notify LeaderboardService dynamically to avoid hard reference
 	if is_host and Engine.has_singleton("LeaderboardService"):
 		var lbs = Engine.get_singleton("LeaderboardService")
-		lbs.call("add_score", name, points)
+		lbs.call("add_score", player_name, points)
 
 # ---------------------------
 # Internal helpers
 # ---------------------------
-func _on_score_submitted(sender_id: int, name: String, points: int) -> void:
+func _on_score_submitted(sender_id: int, player_name: String, points: int) -> void:
+	pass
 	# For now just log; LeaderboardService will consume in next milestone.
-	print("🏅 Score submitted by '%s' (%d): %d points" % [name, sender_id, points]) 
+ 

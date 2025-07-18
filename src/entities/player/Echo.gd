@@ -103,11 +103,9 @@ func _update_dynamic_scale() -> void:
 		current_scale = new_scale
 		_apply_scale_with_transition()
 	
-	# Debug info (only when scale changes)
+	# Only apply scale when it changes significantly
 	if abs(new_scale - current_scale) > 0.01:
-		print("Echo Scale Update - Viewport: %s, Scale: %.3f, Platform: %.2f, Aspect: %.2f" % [
-			viewport_size, current_scale, platform_multiplier, aspect_multiplier
-		])
+		pass
 
 func _apply_scale_with_transition() -> void:
 	"""Apply the current scale with smooth transition to sprite and collision"""
@@ -235,55 +233,40 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif event.keycode == KEY_H:  # Test healing
 			heal(15)
 		elif event.keycode == KEY_1:  # Test form switch sound
-			print("🔧 AUDIO TEST: Testing form switch sound...")
 			if AudioManager:
 				AudioManager.debug_play_sound("form_switch")
-			else:
-				print("🔧 AUDIO TEST: ❌ AudioManager not accessible!")
 		elif event.keycode == KEY_2:  # Test coin sound
-			print("🔧 AUDIO TEST: Testing coin sound...")
 			if AudioManager:
 				AudioManager.debug_play_sound("coin")
-			else:
-				print("🔧 AUDIO TEST: ❌ AudioManager not accessible!")
 		elif event.keycode == KEY_3:  # Test completion sound
-			print("🔧 AUDIO TEST: Testing completion sound...")
 			if AudioManager:
 				AudioManager.debug_play_sound("complete")
-			else:
-				print("🔧 AUDIO TEST: ❌ AudioManager not accessible!")
 		elif event.keycode == KEY_4:  # Test walking sound
-			print("🔧 AUDIO TEST: Testing walking sound...")
 			if AudioManager:
 				AudioManager.debug_play_sound("walking")
-			else:
-				print("🔧 AUDIO TEST: ❌ AudioManager not accessible!")
 		elif event.keycode == KEY_M:  # Toggle background music
-			print("🔧 MUSIC TEST: Toggling background music...")
 			if AudioManager:
 				if AudioManager.is_music_playing:
 					AudioManager.stop_background_music()
 				else:
 					AudioManager.play_background_music()
-			else:
-				print("🔧 MUSIC TEST: ❌ AudioManager not accessible!")
 
 func _adjust_base_scale(adjustment: float) -> void:
 	"""Adjust base scale for testing (debug only)"""
 	base_scale = clamp(base_scale + adjustment, 0.1, 1.0)
-	print("Base scale adjusted to: %.2f" % base_scale)
+
 	_update_dynamic_scale()
 
 func _reset_scale_to_default() -> void:
 	"""Reset scale to default values (debug only)"""
 	base_scale = 0.55
-	print("Scale reset to default: %.2f" % base_scale)
+
 	_update_dynamic_scale()
 
 func _adjust_water_form_offset(adjustment: float) -> void:
 	"""Adjust water form vertical offset for testing (debug only)"""
 	water_form_offset = clamp(water_form_offset + adjustment, -50.0, 50.0)
-	print("Water form offset adjusted to: %.1f" % water_form_offset)
+
 	if current_form == ElementalForms.Form.WATER:
 		_apply_form_position_adjustment()
 
