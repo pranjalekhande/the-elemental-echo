@@ -29,8 +29,10 @@ var step_timer: float = 0.0
 var step_alternate: bool = false
 var fire_body_position: Vector2 = Vector2(0, 35)  # Fire form - more separation
 var water_body_position: Vector2 = Vector2(0, 35)  # Water form - normal separation
+var fire_head_position: Vector2 = Vector2(0, -10)  # Fire form - head position
+var water_head_position: Vector2 = Vector2(0, 5)    # Water form - head lower for alignment
 var step_offset_vertical: float = 4.0  # Reduced vertical movement during steps
-var step_offset_horizontal: float = 60.0  # Horizontal lean during walking
+var step_offset_horizontal: float = 15.0  # Horizontal lean during walking
 var current_step_tween: Tween  # Track current tween to avoid conflicts
 
 func _ready() -> void:
@@ -106,6 +108,10 @@ func _update_form_visual() -> void:
 	# Reset body position when changing forms to new form-specific position
 	if animated_sprite_body:
 		animated_sprite_body.position = _get_base_body_position()
+	
+	# Reset head position when changing forms to new form-specific position
+	if animated_sprite:
+		animated_sprite.position = _get_base_head_position()
 
 func _physics_process(delta: float) -> void:
 	# Store position before move
@@ -219,6 +225,13 @@ func _get_base_body_position() -> Vector2:
 		return fire_body_position
 	else:
 		return water_body_position
+
+func _get_base_head_position() -> Vector2:
+	"""Get form-specific head position"""
+	if current_form == ElementalForms.Form.FIRE:
+		return fire_head_position
+	else:
+		return water_head_position
 
 func _update_step_separation(delta: float) -> void:
 	"""Create step separation effect during walking"""
