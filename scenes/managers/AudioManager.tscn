@@ -1,0 +1,38 @@
+[gd_scene load_steps=7 format=3 uid="uid://bssjjygu83iwl"]
+
+[ext_resource type="Script" path="res://src/managers/AudioManager.gd" id="1_hp1cr"]
+[ext_resource type="AudioStream" uid="uid://d3ldv4818s140" path="res://assets/audio/sfx/30_Jump_03.wav" id="2_audio"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/magic-whoosh.wav" id="3_magic"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/stone_footstep.wav" id="4_footstep"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/level_success.wav" id="5_success"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/ambient_mystical.mp3" id="6_music"]
+
+[node name="AudioManager" type="Node"]
+script = ExtResource("1_hp1cr")
+
+[node name="FormSwitchSfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_magic")
+volume_db = -5.0
+bus = &"SFX"
+
+[node name="CoinPickupSfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_audio")
+volume_db = -5.0
+pitch_scale = 1.8
+bus = &"SFX"
+
+[node name="WalkingSfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_footstep")
+volume_db = -12.0
+bus = &"SFX"
+
+[node name="LevelCompleteSfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_success")
+volume_db = -2.0
+bus = &"SFX"
+
+[node name="BackgroundMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_music")
+volume_db = -18.0
+bus = &"Music"
+autoplay = false 

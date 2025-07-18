@@ -11,6 +11,12 @@ extends Control
 func _ready() -> void:
 	# Enable responsive scaling
 	resized.connect(_on_menu_resized)
+	
+	# Initialize solo host for leaderboard functionality
+	_initialize_solo_host()
+	
+	# Settings icon button is ready
+	
 	# Initial scale setup
 	call_deferred("_on_menu_resized")
 	
@@ -73,10 +79,6 @@ func _on_menu_resized() -> void:
 			collision_shape.shape.size = scaled_size
 
 # Optional: Add methods for future menu options
-func _on_settings_button_pressed() -> void:
-	# Future: Open settings menu
-	pass
-
 func _on_quit_button_pressed() -> void:
 	# Quit game
 	get_tree().quit()
@@ -90,3 +92,49 @@ func _on_play_button_gui_input(event: InputEvent) -> void:
 # Fallback method for simple TextureButton
 func _on_play_button_pressed_fallback() -> void:
 	get_tree().change_scene_to_file("res://scenes/ui/menus/LevelSelectMenu.tscn")
+
+func _initialize_solo_host() -> void:
+	"""Initialize NetworkManager as host for solo play leaderboard functionality"""
+	print("🔄 Initializing solo host...")
+	
+	var nm = null
+	if Engine.has_singleton("NetworkManager"):
+		print("✅ NetworkManager singleton found via Engine.has_singleton")
+		nm = Engine.get_singleton("NetworkManager")
+	else:
+		print("⚠️ NetworkManager not found via Engine.has_singleton, trying direct access...")
+		# Try direct access via /root/ path
+		var root_nm = get_tree().get_root().get_node_or_null("NetworkManager")
+		if root_nm:
+			nm = root_nm
+			print("✅ Found NetworkManager via /root/ path")
+	
+	if not nm:
+		print("❌ NetworkManager not accessible via any method")
+		return
+	
+	print("📋 NetworkManager found, checking current state...")
+	print("   Current is_host: ", nm.is_host)
+	print("   Has multiplayer property: ", nm.has_method("get_multiplayer"))
+	
+	# Check if already hosting or in multiplayer mode
+	var has_peer = false
+	if nm.has_method("get_multiplayer") or "multiplayer" in nm:
+		var mp = nm.multiplayer
+		if mp and mp.multiplayer_peer != null:
+			has_peer = true
+			print("   Existing multiplayer peer detected")
+	
+	# Only start host if not already hosting and no multiplayer peer exists
+	if not nm.is_host and not has_peer:
+		print("🚀 Starting solo host...")
+		nm.set_player_name("Solo Player")
+		nm.start_host()
+		print("✅ Solo host initialized for leaderboard functionality")
+	else:
+		print("ℹ️ Solo host not needed - already hosting or in multiplayer mode")
+
+func _on_settings_icon_button_pressed() -> void:
+	"""Handle settings icon button press"""
+	print("⚙️ Settings icon clicked!")
+	get_tree().change_scene_to_file("res://scenes/ui/menus/SettingsMenu.tscn")

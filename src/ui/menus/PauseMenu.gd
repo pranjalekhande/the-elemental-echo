@@ -7,6 +7,7 @@ signal resume_requested
 signal exit_requested
 
 @onready var resume_button: Button = $PausePanel/VBox/ResumeButton
+@onready var settings_button: Button = $PausePanel/VBox/SettingsButton
 @onready var exit_button: Button = $PausePanel/VBox/ExitButton
 
 func _ready() -> void:
@@ -19,6 +20,9 @@ func _ready() -> void:
 	# Connect button signals if not already connected in scene
 	if resume_button and not resume_button.pressed.is_connected(_on_resume_button_pressed):
 		resume_button.pressed.connect(_on_resume_button_pressed)
+	
+	if settings_button and not settings_button.pressed.is_connected(_on_settings_button_pressed):
+		settings_button.pressed.connect(_on_settings_button_pressed)
 	
 	if exit_button and not exit_button.pressed.is_connected(_on_exit_button_pressed):
 		exit_button.pressed.connect(_on_exit_button_pressed)
@@ -69,6 +73,13 @@ func _on_resume_button_pressed() -> void:
 	"""Handle resume button press"""
 	hide_pause_menu()
 	resume_requested.emit()
+
+func _on_settings_button_pressed() -> void:
+	"""Handle settings button press"""
+	print("⚙️ Settings button clicked from PauseMenu!")
+	# Unpause before changing scenes to avoid issues
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://scenes/ui/menus/SettingsMenu.tscn")
 
 func _on_exit_button_pressed() -> void:
 	"""Handle exit button press"""

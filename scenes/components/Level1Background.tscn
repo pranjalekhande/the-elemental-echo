@@ -11,6 +11,7 @@ z_index = -100
 [node name="SkyLayer" type="ParallaxBackground" parent="."]
 
 [node name="FarBackground" type="ParallaxLayer" parent="SkyLayer"]
+position = Vector2(-10, -10)
 motion_scale = Vector2(0.1, 0.1)
 
 [node name="BackgroundSprite3" type="Sprite2D" parent="SkyLayer/FarBackground"]
@@ -46,7 +47,7 @@ scale = Vector2(2.5, 2.5)
 texture = ExtResource("3_grass1")
 
 [node name="GrassSprite1" type="Sprite2D" parent="SkyLayer/ForegroundLayer/GrassSprite1"]
-position = Vector2(566.8, 3.20001)
+position = Vector2(566.8, 0.399998)
 texture = ExtResource("3_grass1")
 
 [node name="GrassSprite2" type="Sprite2D" parent="SkyLayer/ForegroundLayer"]

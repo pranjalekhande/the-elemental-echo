@@ -19,6 +19,10 @@ config/icon="res://icon.svg"
 
 CollectionManager="*res://src/autoloads/CollectionManager.gd"
 ProgressManager="*res://src/autoloads/ProgressManager.gd"
+SettingsManager="*res://src/autoloads/SettingsManager.gd"
+NetworkManager="*res://src/network/NetworkManager.gd"
+LeaderboardService="*res://src/network/LeaderboardService.gd"
+AudioManager="*res://scenes/managers/AudioManager.tscn"
 
 [display]
 

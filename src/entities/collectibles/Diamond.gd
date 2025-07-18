@@ -72,6 +72,10 @@ func _collect_diamond() -> void:
 		
 	is_collected = true
 	
+	# Play collection sound effect
+	if AudioManager:
+		AudioManager.coin_pickup_sfx.play()
+	
 	# Stop form checking timer
 	form_check_timer.stop()
 	

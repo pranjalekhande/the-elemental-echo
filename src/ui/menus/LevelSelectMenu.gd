@@ -8,6 +8,8 @@ var stats_label: Label
 var back_button: Button
 var reset_button: Button
 var scroll_container: ScrollContainer
+var leaderboard_button: Button
+var settings_button: Button
 
 # Level card scene reference
 const LEVEL_CARD_SCENE = preload("res://scenes/ui/menus/LevelCard.tscn")
@@ -15,6 +17,10 @@ const LEVEL_CARD_SCENE = preload("res://scenes/ui/menus/LevelCard.tscn")
 var level_cards: Array[LevelCard] = []
 
 func _ready() -> void:
+	# Start background music for level selection
+	if AudioManager:
+		AudioManager.play_background_music()
+	
 	# Get node references manually with better error handling
 	title_label = get_node_or_null("VBox/TitleLabel")
 	level_cards_container = get_node_or_null("VBox/ScrollContainer/LevelCardsContainer")
@@ -22,6 +28,8 @@ func _ready() -> void:
 	back_button = get_node_or_null("VBox/BackButton")
 	reset_button = get_node_or_null("VBox/ButtonContainer/ResetButton")
 	scroll_container = get_node_or_null("VBox/ScrollContainer")
+	leaderboard_button = get_node_or_null("VBox/LeaderboardContainer/LeaderboardButton")
+	settings_button = get_node_or_null("SettingsIconButton")
 	
 	# Connect visibility signal to refresh menu when returning to it
 	visibility_changed.connect(_on_visibility_changed)
@@ -37,8 +45,19 @@ func _ready() -> void:
 		reset_button.pressed.connect(_on_reset_button_pressed)
 	# Reset button is optional in this menu
 	
+	if leaderboard_button:
+		leaderboard_button.pressed.connect(_on_leaderboard_button_pressed)
+	
+	if settings_button:
+		settings_button.pressed.connect(_on_settings_button_pressed)
+	
 	ProgressManager.level_unlocked.connect(_on_level_unlocked)
 	_setup_menu()
+
+func _on_leaderboard_button_pressed() -> void:
+	"""Handle leaderboard button press"""
+	print("🏆 Opening leaderboard menu...")
+	get_tree().change_scene_to_file("res://scenes/ui/menus/LeaderboardMenu.tscn")
 
 func _setup_menu() -> void:
 	"""Initialize the level selection menu"""
@@ -204,3 +223,8 @@ func _on_menu_resized() -> void:
 	columns = min(columns, 6)  # Don't exceed 6 columns for readability
 	
 	level_cards_container.columns = columns 
+
+func _on_settings_button_pressed() -> void:
+	"""Handle settings button press"""
+	print("⚙️ Settings button clicked from LevelSelectMenu!")
+	get_tree().change_scene_to_file("res://scenes/ui/menus/SettingsMenu.tscn")

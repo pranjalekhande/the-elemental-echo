@@ -18,6 +18,10 @@ func _ready() -> void:
 	# IMMEDIATE DEBUG - Verify script is running
 	print("🚀 MainLevel script _ready() called!")
 	
+	# Start background music for level
+	if AudioManager:
+		AudioManager.play_background_music()
+	
 	# Get reference to key nodes
 	echo_node = get_node("Echo")
 	level_boundaries = get_node("LevelBoundaries")

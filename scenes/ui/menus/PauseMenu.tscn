@@ -24,10 +24,10 @@ color = Color(0, 0, 0, 0.6)
 [node name="PausePanel" type="Panel" parent="."]
 modulate = Color(1, 1, 1, 0.95)
 layout_mode = 0
-offset_left = -1080.0
-offset_top = -646.0
-offset_right = -840.0
-offset_bottom = -466.0
+offset_left = -120.0
+offset_top = -90.0
+offset_right = 120.0
+offset_bottom = 90.0
 
 [node name="VBox" type="VBoxContainer" parent="PausePanel"]
 layout_mode = 1
@@ -60,7 +60,18 @@ theme_override_font_sizes/font_size = 18
 text = "Resume"
 
 [node name="Spacer2" type="Control" parent="PausePanel/VBox"]
-custom_minimum_size = Vector2(0, 12)
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+
+[node name="SettingsButton" type="Button" parent="PausePanel/VBox"]
+custom_minimum_size = Vector2(180, 40)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 20
+text = "⚙️ Settings"
+
+[node name="Spacer3" type="Control" parent="PausePanel/VBox"]
+custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
 
 [node name="ExitButton" type="Button" parent="PausePanel/VBox"]
@@ -71,4 +82,5 @@ theme_override_font_sizes/font_size = 18
 text = "Exit"
 
 [connection signal="pressed" from="PausePanel/VBox/ResumeButton" to="." method="_on_resume_button_pressed"]
+[connection signal="pressed" from="PausePanel/VBox/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="pressed" from="PausePanel/VBox/ExitButton" to="." method="_on_exit_button_pressed"]

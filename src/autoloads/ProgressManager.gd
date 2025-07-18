@@ -113,6 +113,7 @@ func _create_new_save() -> void:
 		"version": SAVE_VERSION,
 		"device_id": _generate_device_id(),
 		"created_at": Time.get_datetime_string_from_system(),
+		"player_name": "",  # Add player name storage
 		"levels": {},
 		"global_stats": {
 			"total_play_time": 0.0,
@@ -325,3 +326,19 @@ func reset_all_progress() -> void:
 	_create_new_save()
 	save_progress()
 	print("Progress reset complete") 
+
+func get_player_name() -> String:
+	"""Get the stored player name"""
+	return save_data.get("player_name", "")
+
+func set_player_name(name: String) -> void:
+	"""Set and save the player name"""
+	var cleaned_name = name.strip_edges()
+	save_data["player_name"] = cleaned_name
+	save_progress()
+	print("✅ Player name saved: '%s'" % cleaned_name)
+
+func has_player_name() -> bool:
+	"""Check if a player name has been set"""
+	var name = get_player_name()
+	return name != "" and name.length() > 0 

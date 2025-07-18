@@ -31,7 +31,10 @@ func activate(echo: Node2D = null) -> void:
 	# Emit activation signal for other systems
 	activated.emit()
 	
-	# Visual/audio feedback would go here
+	# Play level completion sound effect
+	if AudioManager:
+		AudioManager.level_complete_sfx.play()
+	
 	print("Heartspring activated! Healing provided.")
 	
 	# Transition to end screen after brief delay

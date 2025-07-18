@@ -1,13 +1,13 @@
-[gd_scene load_steps=6 format=4]
+[gd_scene load_steps=7 format=3 uid="uid://hbmx5kipt0t6"]
 
 [ext_resource type="PackedScene" path="res://scenes/components/LevelBackground.tscn" id="1"]
-[ext_resource type="Script" path="res://src/ui/menus/EndScreen.gd" id="2"]
+[ext_resource type="Script" uid="uid://cufcbna2xkyap" path="res://src/ui/menus/EndScreen.gd" id="2"]
 
 [sub_resource type="Environment" id="Environment_victory"]
 background_mode = 1
 background_color = Color(0.1, 0.15, 0.2, 1)
 ambient_light_source = 2
-ambient_light_color = Color(0.6, 0.8, 1.0, 1)
+ambient_light_color = Color(0.6, 0.8, 1, 1)
 ambient_light_energy = 0.4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_score_panel"]
@@ -22,6 +22,18 @@ corner_radius_top_right = 16
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
+bg_color = Color(0.3, 0.6, 0.4, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 1, 0.8, 0.9)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button"]
 bg_color = Color(0.2, 0.4, 0.3, 0.8)
 border_width_left = 2
@@ -34,26 +46,19 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
-bg_color = Color(0.3, 0.6, 0.4, 0.9)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.6, 1.0, 0.8, 0.9)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-
 [node name="EndScreen" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("2")
 
 [node name="LevelBackground" parent="." instance=ExtResource("1")]
+layout_mode = 1
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_victory")
@@ -63,12 +68,16 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="CenterContainer" type="CenterContainer" parent="UI"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="VBox" type="VBoxContainer" parent="UI/CenterContainer"]
 layout_mode = 2
@@ -82,12 +91,12 @@ text = "LEVEL COMPLETE"
 horizontal_alignment = 1
 
 [node name="Spacer1" type="Control" parent="UI/CenterContainer/VBox"]
-layout_mode = 2
 custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
 
 [node name="ScorePanel" type="Panel" parent="UI/CenterContainer/VBox"]
-layout_mode = 2
 custom_minimum_size = Vector2(400, 300)
+layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_score_panel")
 
 [node name="ScoreContent" type="VBoxContainer" parent="UI/CenterContainer/VBox/ScorePanel"]
@@ -95,83 +104,85 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 20
-offset_top = 20
-offset_right = -20
-offset_bottom = -20
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
 alignment = 1
 
 [node name="ScoreTitle" type="Label" parent="UI/CenterContainer/VBox/ScorePanel/ScoreContent"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.8, 0.9, 1.0, 0.9)
+theme_override_colors/font_color = Color(0.8, 0.9, 1, 0.9)
 theme_override_font_sizes/font_size = 18
 text = "FINAL SCORE"
 horizontal_alignment = 1
 
 [node name="ScoreValue" type="Label" parent="UI/CenterContainer/VBox/ScorePanel/ScoreContent"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1.0, 0.9, 0.4, 1.0)
+theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
 theme_override_font_sizes/font_size = 48
 text = "0"
 horizontal_alignment = 1
 
 [node name="Spacer2" type="Control" parent="UI/CenterContainer/VBox/ScorePanel/ScoreContent"]
-layout_mode = 2
 custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
 
 [node name="Stats" type="VBoxContainer" parent="UI/CenterContainer/VBox/ScorePanel/ScoreContent"]
 layout_mode = 2
 
 [node name="DiamondStats" type="Label" parent="UI/CenterContainer/VBox/ScorePanel/ScoreContent/Stats"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1.0)
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
 theme_override_font_sizes/font_size = 16
 text = "💎 6/6 Diamonds Collected"
 horizontal_alignment = 1
 
 [node name="TimeStats" type="Label" parent="UI/CenterContainer/VBox/ScorePanel/ScoreContent/Stats"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1.0)
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
 theme_override_font_sizes/font_size = 16
 text = "⏱️ Time: 01:23"
 horizontal_alignment = 1
 
 [node name="PerformanceStats" type="Label" parent="UI/CenterContainer/VBox/ScorePanel/ScoreContent/Stats"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1.0)
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
 theme_override_font_sizes/font_size = 16
 text = "⚡ 5 Form Switches"
 horizontal_alignment = 1
 
 [node name="Spacer3" type="Control" parent="UI/CenterContainer/VBox"]
-layout_mode = 2
 custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
 
 [node name="ButtonContainer" type="HBoxContainer" parent="UI/CenterContainer/VBox"]
 layout_mode = 2
 alignment = 1
 
 [node name="PlayAgainButton" type="Button" parent="UI/CenterContainer/VBox/ButtonContainer"]
-layout_mode = 2
 custom_minimum_size = Vector2(160, 45)
-theme_override_styles/normal = SubResource("StyleBoxFlat_button")
-theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
 theme_override_font_sizes/font_size = 16
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 text = "Next Level"
 
 [node name="Spacer4" type="Control" parent="UI/CenterContainer/VBox/ButtonContainer"]
-layout_mode = 2
 custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
 
 [node name="MainMenuButton" type="Button" parent="UI/CenterContainer/VBox/ButtonContainer"]
-layout_mode = 2
 custom_minimum_size = Vector2(160, 45)
-theme_override_styles/normal = SubResource("StyleBoxFlat_button")
-theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
 theme_override_font_sizes/font_size = 16
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
 text = "Level Select"
 
 [connection signal="pressed" from="UI/CenterContainer/VBox/ButtonContainer/PlayAgainButton" to="." method="_on_play_again_button_pressed"]
-[connection signal="pressed" from="UI/CenterContainer/VBox/ButtonContainer/MainMenuButton" to="." method="_on_main_menu_button_pressed"] 
+[connection signal="pressed" from="UI/CenterContainer/VBox/ButtonContainer/MainMenuButton" to="." method="_on_main_menu_button_pressed"]

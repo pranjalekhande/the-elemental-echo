@@ -50,6 +50,8 @@ func _respawn_player(player: Node2D) -> void:
 	if player is CharacterBody2D:
 		player.velocity = Vector2.ZERO
 	
+	# Could add respawn sound effect here if needed
+	
 	# Emit signal for other systems to handle
 	player_died.emit(player)
 

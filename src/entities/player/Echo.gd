@@ -33,6 +33,11 @@ var water_form_offset: float = 15.0  # Y offset for water form to fix gap issue
 var last_animation_name: String = ""
 var last_horizontal_input: float = 0.0
 
+# Walking sound system
+var walking_sound_timer: Timer
+var is_walking_sound_playing: bool = false
+var walking_sound_interval: float = 0.4  # Time between footstep sounds
+
 func _ready() -> void:
 	# Add Echo to player group for easy finding
 	add_to_group("player")
@@ -56,6 +61,12 @@ func _ready() -> void:
 	
 	# Apply initial form positioning
 	call_deferred("_apply_form_position_adjustment")
+	
+	# Setup walking sound timer
+	walking_sound_timer = Timer.new()
+	walking_sound_timer.wait_time = walking_sound_interval
+	walking_sound_timer.timeout.connect(_play_walking_sound)
+	add_child(walking_sound_timer)
 
 func _setup_responsive_scaling() -> void:
 	"""Setup dynamic scaling based on viewport and platform"""
@@ -223,6 +234,39 @@ func _unhandled_input(event: InputEvent) -> void:
 			damage(10)
 		elif event.keycode == KEY_H:  # Test healing
 			heal(15)
+		elif event.keycode == KEY_1:  # Test form switch sound
+			print("🔧 AUDIO TEST: Testing form switch sound...")
+			if AudioManager:
+				AudioManager.debug_play_sound("form_switch")
+			else:
+				print("🔧 AUDIO TEST: ❌ AudioManager not accessible!")
+		elif event.keycode == KEY_2:  # Test coin sound
+			print("🔧 AUDIO TEST: Testing coin sound...")
+			if AudioManager:
+				AudioManager.debug_play_sound("coin")
+			else:
+				print("🔧 AUDIO TEST: ❌ AudioManager not accessible!")
+		elif event.keycode == KEY_3:  # Test completion sound
+			print("🔧 AUDIO TEST: Testing completion sound...")
+			if AudioManager:
+				AudioManager.debug_play_sound("complete")
+			else:
+				print("🔧 AUDIO TEST: ❌ AudioManager not accessible!")
+		elif event.keycode == KEY_4:  # Test walking sound
+			print("🔧 AUDIO TEST: Testing walking sound...")
+			if AudioManager:
+				AudioManager.debug_play_sound("walking")
+			else:
+				print("🔧 AUDIO TEST: ❌ AudioManager not accessible!")
+		elif event.keycode == KEY_M:  # Toggle background music
+			print("🔧 MUSIC TEST: Toggling background music...")
+			if AudioManager:
+				if AudioManager.is_music_playing:
+					AudioManager.stop_background_music()
+				else:
+					AudioManager.play_background_music()
+			else:
+				print("🔧 MUSIC TEST: ❌ AudioManager not accessible!")
 
 func _adjust_base_scale(adjustment: float) -> void:
 	"""Adjust base scale for testing (debug only)"""
@@ -246,6 +290,11 @@ func _adjust_water_form_offset(adjustment: float) -> void:
 func _toggle_form() -> void:
 	is_changing_form = true
 	current_form = 1 if current_form == 0 else 0  # Toggle between FIRE (0) and WATER (1)
+	
+	# Play form switching sound effect
+	if AudioManager:
+		AudioManager.form_switch_sfx.play()
+	
 	_update_form_visual()
 	
 	# Track form switch for collection manager
@@ -316,6 +365,9 @@ func _physics_process(delta: float) -> void:
 	# Update animations based on current state
 	_update_movement_animation()
 	
+	# Handle walking sound
+	_handle_walking_sound()
+	
 	# Clean up invalid ice wall references periodically
 	_cleanup_ice_wall_references()
 		
@@ -348,6 +400,26 @@ func _cleanup_ice_wall_references() -> void:
 	for i in range(overlapping_ice_walls.size() - 1, -1, -1):
 		if not is_instance_valid(overlapping_ice_walls[i]):
 			overlapping_ice_walls.remove_at(i)
+
+func _handle_walking_sound() -> void:
+	"""Handle walking sound effects based on movement state"""
+	var is_moving_on_ground = is_on_floor() and abs(last_horizontal_input) > 0.1
+	
+	if is_moving_on_ground and not is_walking_sound_playing:
+		# Start playing walking sounds
+		is_walking_sound_playing = true
+		walking_sound_timer.start()
+		_play_walking_sound()  # Play first sound immediately
+	elif not is_moving_on_ground and is_walking_sound_playing:
+		# Stop playing walking sounds
+		is_walking_sound_playing = false
+		walking_sound_timer.stop()
+
+func _play_walking_sound() -> void:
+	"""Play a single footstep sound"""
+	if is_walking_sound_playing and AudioManager:
+		# Use walking sound (already configured in AudioManager)
+		AudioManager.walking_sfx.play()
 
 # Animation System Methods
 func _get_animation_name(base_animation: String) -> String:
