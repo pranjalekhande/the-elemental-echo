@@ -15,9 +15,15 @@ var pause_button: Button
 var is_paused: bool = false
 
 func _ready() -> void:
+	# IMMEDIATE DEBUG - Verify script is running
+	print("🚀 MainLevel script _ready() called!")
+	
 	# Get reference to key nodes
 	echo_node = get_node("Echo")
 	level_boundaries = get_node("LevelBoundaries")
+	
+	print("🔍 Echo node found: ", echo_node != null)
+	print("🔍 LevelBoundaries node found: ", level_boundaries != null)
 	
 	# Setup pause menu
 	_setup_pause_menu()
@@ -136,6 +142,11 @@ func _on_player_died(player: Node2D) -> void:
 	"""Called when Echo dies - reset the entire level to initial state"""
 	print("Echo died! Resetting level to initial state...")
 	
+	# Defer all reset operations to avoid physics conflicts
+	call_deferred("_perform_level_reset")
+
+func _perform_level_reset() -> void:
+	"""Perform all level reset operations safely outside physics processing"""
 	# Reset all diamonds
 	_reset_diamonds()
 	
@@ -189,7 +200,7 @@ func _reset_diamonds() -> void:
 
 func _reset_ice_walls() -> void:
 	"""Remove existing ice wall and recreate from initial state"""
-	var ice_wall = get_node("IceWall")
+	var ice_wall = get_node_or_null("IceWall")
 	if ice_wall:
 		ice_wall.queue_free()
 	
@@ -252,3 +263,7 @@ func _count_diamonds_recursive(node: Node) -> Array:
 			water_count += child_counts[1]
 	
 	return [fire_count, water_count] 
+
+
+
+ 

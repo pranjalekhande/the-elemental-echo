@@ -145,6 +145,11 @@ func _on_player_died(player: Node2D) -> void:
 	"""Called when Echo dies - reset the entire level to initial state"""
 	print("Echo died! Resetting Level 2 to initial state...")
 	
+	# Defer all reset operations to avoid physics conflicts
+	call_deferred("_perform_level_reset")
+
+func _perform_level_reset() -> void:
+	"""Perform all level reset operations safely outside physics processing"""
 	# Reset all diamonds
 	_reset_diamonds()
 	
@@ -201,7 +206,7 @@ func _reset_diamonds() -> void:
 
 func _reset_ice_walls() -> void:
 	"""Remove existing ice wall and recreate from initial state"""
-	var ice_wall = get_node("IceWall")
+	var ice_wall = get_node_or_null("IceWall")
 	if ice_wall:
 		ice_wall.queue_free()
 	

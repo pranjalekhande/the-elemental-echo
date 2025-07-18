@@ -4,7 +4,7 @@ extends Node2D
 # Clean, reusable component for all levels
 
 @onready var death_zone: Area2D = $InvisibleBoundaries/DeathZone
-@onready var debug_markers: Node2D = $DebugMarkers
+@onready var debug_markers: Node2D = get_node_or_null("DebugMarkers")
 
 var player_spawn_point: Vector2 = Vector2.ZERO
 var level_width: float = 2000.0
@@ -35,6 +35,7 @@ func _find_spawn_point() -> void:
 		var echo = parent_scene.find_child("Echo")
 		if echo:
 			player_spawn_point = echo.global_position
+			print("🎯 Player spawn point set to: ", player_spawn_point)
 
 func _on_death_zone_entered(body: Node2D) -> void:
 	if body.name == "Echo":
@@ -70,25 +71,33 @@ func set_boundaries(width: float, height: float, spawn_pos: Vector2) -> void:
 	if death_zone_node:
 		death_zone_node.position.y = height/2 + 100
 
-func add_platform_tiles(layer_name: String, tile_positions: Array[Vector2i], tile_id: Vector2i = Vector2i(0, 0)) -> void:
+func add_platform_tiles(layer_name: String, tile_positions: Array, tile_id: Vector2i = Vector2i(0, 0)) -> void:
 	"""Add platform tiles to specified layer"""
 	var tilemap = $MainTileMap
 	if not tilemap:
 		print("Warning: MainTileMap not found in LevelBoundaries")
 		return
-		
+	
+	print("🔧 Adding ", tile_positions.size(), " tiles to layer: ", layer_name)
+	
+	# Access the layer directly as a child of MainTileMap
 	var layer = tilemap.get_node(layer_name + "Layer")
 	if layer:
+		print("✅ Found layer: ", layer_name + "Layer")
 		for pos in tile_positions:
 			layer.set_cell(pos, 0, tile_id)
+			print("   🔹 Placed tile at: ", pos, " with ID: ", tile_id)
 	else:
-		print("Warning: Layer '", layer_name, "Layer' not found in MainTileMap")
+		print("❌ Warning: Layer '", layer_name + "Layer", "' not found in MainTileMap")
+		print("📋 Available children:")
+		for child in tilemap.get_children():
+			print("   - ", child.name)
 
-func add_wall_tiles(tile_positions: Array[Vector2i], tile_id: Vector2i = Vector2i(0, 1)) -> void:
+func add_wall_tiles(tile_positions: Array, tile_id: Vector2i = Vector2i(0, 1)) -> void:
 	"""Add wall tiles for solid boundaries"""
 	add_platform_tiles("Wall", tile_positions, tile_id)
 
-func add_decoration_tiles(tile_positions: Array[Vector2i], tile_id: Vector2i = Vector2i(0, 2)) -> void:
+func add_decoration_tiles(tile_positions: Array, tile_id: Vector2i = Vector2i(0, 2)) -> void:
 	"""Add decorative tiles (no collision)"""
 	add_platform_tiles("Decoration", tile_positions, tile_id)
 

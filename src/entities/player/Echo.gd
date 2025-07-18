@@ -3,16 +3,25 @@ extends CharacterBody2D
 # Echo - The player character
 # Platformer character with gravity-based movement and elemental shifting
 
-const SPEED := 300.0
+const SPEED := 200.0
 const GRAVITY := 980.0  # Standard gravity (pixels per second²)
-const JUMP_SPEED := 800.0  # Upward velocity when jumping (scaled for level)
+const JUMP_SPEED := 600.0  # Upward velocity when jumping (scaled for level)
 var current_form: int = 0  # 0 = FIRE, 1 = WATER (ElementalForms.Form.FIRE/WATER)
 var last_position := Vector2.ZERO
 var is_changing_form := false
 var overlapping_ice_walls: Array[Node] = []
 
-@onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite
-@onready var animated_sprite_body: AnimatedSprite2D = $AnimatedSpriteBody
+# Dynamic scaling system
+var base_scale: float = 0.55  # Default scale factor (increased for better visibility)
+var current_scale: float = 0.55  # Current applied scale
+var base_resolution: Vector2 = Vector2(1920, 1080)  # Design base resolution
+var min_scale: float = 0.2  # Minimum scale for small screens
+var max_scale: float = 0.5  # Maximum scale for large screens
+
+# Form positioning adjustments
+var water_form_offset: float = 15.0  # Y offset for water form to fix gap issue
+
+@onready var animated_sprite: AnimatedSprite2D = $EchoAnimatedSprite
 @onready var interaction_area: Area2D = $InteractionArea
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var health_component: HealthComponent = $HealthComponent
@@ -23,17 +32,6 @@ var overlapping_ice_walls: Array[Node] = []
 # Animation state tracking
 var last_animation_name: String = ""
 var last_horizontal_input: float = 0.0
-
-# Step separation system
-var step_timer: float = 0.0
-var step_alternate: bool = false
-var fire_body_position: Vector2 = Vector2(0, 35)  # Fire form - more separation
-var water_body_position: Vector2 = Vector2(0, 35)  # Water form - normal separation
-var fire_head_position: Vector2 = Vector2(0, -10)  # Fire form - head position
-var water_head_position: Vector2 = Vector2(0, 5)    # Water form - head lower for alignment
-var step_offset_vertical: float = 4.0  # Reduced vertical movement during steps
-var step_offset_horizontal: float = 15.0  # Horizontal lean during walking
-var current_step_tween: Tween  # Track current tween to avoid conflicts
 
 func _ready() -> void:
 	# Add Echo to player group for easy finding
@@ -52,10 +50,172 @@ func _ready() -> void:
 	# Initialize health bar
 	_update_health_bar_color()
 	_on_health_changed(health_component.current_health, health_component.max_health)
+	
+	# Setup responsive scaling
+	_setup_responsive_scaling()
+	
+	# Apply initial form positioning
+	call_deferred("_apply_form_position_adjustment")
+
+func _setup_responsive_scaling() -> void:
+	"""Setup dynamic scaling based on viewport and platform"""
+	# Connect to viewport size changes
+	get_viewport().size_changed.connect(_on_viewport_resized)
+	
+	# Apply initial scaling
+	call_deferred("_update_dynamic_scale")
+
+func _on_viewport_resized() -> void:
+	"""Handle viewport resize to update Echo's scale"""
+	_update_dynamic_scale()
+
+func _update_dynamic_scale() -> void:
+	"""Calculate and apply appropriate scale based on screen size and platform"""
+	var viewport_size = get_viewport().get_visible_rect().size
+	
+	# Calculate scale factors
+	var width_scale = viewport_size.x / base_resolution.x
+	var height_scale = viewport_size.y / base_resolution.y
+	var viewport_scale = min(width_scale, height_scale)
+	
+	# Platform-specific scaling adjustments
+	var platform_multiplier = _get_platform_scale_multiplier()
+	var aspect_ratio = viewport_size.x / viewport_size.y
+	var aspect_multiplier = _get_aspect_ratio_multiplier(aspect_ratio)
+	
+	# Calculate final scale
+	var new_scale = base_scale * viewport_scale * platform_multiplier * aspect_multiplier
+	new_scale = clamp(new_scale, min_scale, max_scale)
+	
+	# Only update if scale changed significantly (avoid unnecessary updates)
+	if abs(new_scale - current_scale) > 0.01:
+		current_scale = new_scale
+		_apply_scale_with_transition()
+	
+	# Debug info (only when scale changes)
+	if abs(new_scale - current_scale) > 0.01:
+		print("Echo Scale Update - Viewport: %s, Scale: %.3f, Platform: %.2f, Aspect: %.2f" % [
+			viewport_size, current_scale, platform_multiplier, aspect_multiplier
+		])
+
+func _apply_scale_with_transition() -> void:
+	"""Apply the current scale with smooth transition to sprite and collision"""
+	if not animated_sprite:
+		return
+	
+	# Smooth transition for sprite scale
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(animated_sprite, "scale", Vector2.ONE * current_scale, 0.3)
+	
+	# Maintain form-specific positioning after scaling
+	call_deferred("_apply_form_position_adjustment")
+	
+	# Proportionally scale collision shapes for accurate physics
+	_scale_collision_shapes()
+
+func _apply_form_position_adjustment() -> void:
+	"""Apply form-specific position adjustments to fix sprite alignment differences"""
+	if not animated_sprite:
+		return
+	
+	var base_position = Vector2(0, -50)  # Base sprite position
+	var form_offset = Vector2.ZERO
+	
+	# Water form sprites are positioned differently in their frames
+	# Apply offset to align water form properly with platforms
+	if current_form == 1:  # WATER form (ElementalForms.Form.WATER)
+		form_offset = Vector2(0, water_form_offset)  # Move water form down by offset
+	else:  # FIRE form (ElementalForms.Form.FIRE = 0)
+		form_offset = Vector2.ZERO  # Fire form uses base position
+	
+	var final_position = base_position + form_offset
+	
+	# Apply position smoothly to avoid jarring transitions
+	var tween = create_tween()
+	tween.tween_property(animated_sprite, "position", final_position, 0.2)
+
+func _scale_collision_shapes() -> void:
+	"""Scale collision shapes proportionally to maintain accurate physics"""
+	# Note: We don't scale collision shapes as it can break physics
+	# Instead, we maintain base collision size for consistent gameplay
+	# The visual appearance scales, but physics remains reliable
+	pass
+
+func get_visual_scale() -> float:
+	"""Get the current visual scale factor for other systems that need it"""
+	return current_scale
+
+func get_scaling_info() -> Dictionary:
+	"""Get comprehensive scaling information for other systems"""
+	var viewport_size = get_viewport().get_visible_rect().size
+	var aspect_ratio = viewport_size.x / viewport_size.y
+	
+	return {
+		"visual_scale": current_scale,
+		"base_scale": base_scale,
+		"viewport_size": viewport_size,
+		"aspect_ratio": aspect_ratio,
+		"platform_multiplier": _get_platform_scale_multiplier(),
+		"aspect_multiplier": _get_aspect_ratio_multiplier(aspect_ratio)
+	}
+
+# Static method for other objects to calculate appropriate scaling
+static func calculate_responsive_scale(base_scale_value: float = 0.55) -> float:
+	"""Calculate responsive scale for other game objects"""
+	var viewport = Engine.get_main_loop().current_scene.get_viewport()
+	var viewport_size = viewport.get_visible_rect().size
+	var base_resolution = Vector2(1920, 1080)
+	
+	var width_scale = viewport_size.x / base_resolution.x
+	var height_scale = viewport_size.y / base_resolution.y
+	var viewport_scale = min(width_scale, height_scale)
+	
+	var platform_multiplier = 1.2 if OS.has_feature("mobile") else 1.0
+	var aspect_ratio = viewport_size.x / viewport_size.y
+	var aspect_multiplier = 1.3 if aspect_ratio < 1.3 else 1.0
+	
+	return clamp(base_scale_value * viewport_scale * platform_multiplier * aspect_multiplier, 0.2, 0.5)
+
+func _get_platform_scale_multiplier() -> float:
+	"""Get platform-specific scale multiplier"""
+	# Check if running on mobile platform
+	if OS.has_feature("mobile"):
+		return 1.2  # Slightly larger on mobile for better touch interaction
+	elif OS.has_feature("web"):
+		return 1.1  # Slightly larger on web for visibility
+	else:
+		return 1.0  # Standard scale for desktop
+
+func _get_aspect_ratio_multiplier(aspect_ratio: float) -> float:
+	"""Adjust scale based on screen aspect ratio"""
+	var standard_aspect = 16.0 / 9.0  # 1.778
+	
+	if aspect_ratio < 1.3:  # Portrait or square (mobile portrait)
+		return 1.3  # Larger for portrait orientation
+	elif aspect_ratio > 2.1:  # Ultra-wide screens
+		return 0.9  # Slightly smaller for ultra-wide
+	elif aspect_ratio < standard_aspect:  # More square-ish (4:3, etc.)
+		return 1.1  # Slightly larger for more square screens
+	else:
+		return 1.0  # Standard for 16:9 and similar
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_Q and not is_changing_form:
 		_toggle_form()
+	
+	# Development scaling controls (only in debug builds)
+	if OS.is_debug_build() and event is InputEventKey and event.pressed:
+		if event.keycode == KEY_EQUAL or event.keycode == KEY_KP_ADD:  # + key
+			_adjust_base_scale(0.05)
+		elif event.keycode == KEY_MINUS or event.keycode == KEY_KP_SUBTRACT:  # - key
+			_adjust_base_scale(-0.05)
+		elif event.keycode == KEY_0:  # Reset to default
+			_reset_scale_to_default()
+		elif event.keycode == KEY_BRACKETLEFT:  # [ key - adjust water form up
+			_adjust_water_form_offset(-2)
+		elif event.keycode == KEY_BRACKETRIGHT:  # ] key - adjust water form down
+			_adjust_water_form_offset(2)
 	
 	# Test controls for health system
 	if event is InputEventKey and event.pressed:
@@ -63,6 +223,25 @@ func _unhandled_input(event: InputEvent) -> void:
 			damage(10)
 		elif event.keycode == KEY_H:  # Test healing
 			heal(15)
+
+func _adjust_base_scale(adjustment: float) -> void:
+	"""Adjust base scale for testing (debug only)"""
+	base_scale = clamp(base_scale + adjustment, 0.1, 1.0)
+	print("Base scale adjusted to: %.2f" % base_scale)
+	_update_dynamic_scale()
+
+func _reset_scale_to_default() -> void:
+	"""Reset scale to default values (debug only)"""
+	base_scale = 0.55
+	print("Scale reset to default: %.2f" % base_scale)
+	_update_dynamic_scale()
+
+func _adjust_water_form_offset(adjustment: float) -> void:
+	"""Adjust water form vertical offset for testing (debug only)"""
+	water_form_offset = clamp(water_form_offset + adjustment, -50.0, 50.0)
+	print("Water form offset adjusted to: %.1f" % water_form_offset)
+	if current_form == ElementalForms.Form.WATER:
+		_apply_form_position_adjustment()
 
 func _toggle_form() -> void:
 	is_changing_form = true
@@ -75,7 +254,9 @@ func _toggle_form() -> void:
 	
 	# If changing to fire form, check all overlapping ice walls
 	if current_form == 0:  # FIRE
-		for wall in overlapping_ice_walls:
+		# Create a copy of the array to avoid modification during iteration
+		var walls_to_check = overlapping_ice_walls.duplicate()
+		for wall in walls_to_check:
 			if is_instance_valid(wall) and wall.has_method("handle_fire_form"):
 				wall.handle_fire_form(self)
 	
@@ -105,13 +286,8 @@ func _update_form_visual() -> void:
 	last_animation_name = ""
 	_update_movement_animation()
 	
-	# Reset body position when changing forms to new form-specific position
-	if animated_sprite_body:
-		animated_sprite_body.position = _get_base_body_position()
-	
-	# Reset head position when changing forms to new form-specific position
-	if animated_sprite:
-		animated_sprite.position = _get_base_head_position()
+	# Apply form-specific position adjustments to fix sprite alignment differences
+	_apply_form_position_adjustment()
 
 func _physics_process(delta: float) -> void:
 	# Store position before move
@@ -140,27 +316,38 @@ func _physics_process(delta: float) -> void:
 	# Update animations based on current state
 	_update_movement_animation()
 	
-	# Update step separation effect
-	_update_step_separation(delta)
+	# Clean up invalid ice wall references periodically
+	_cleanup_ice_wall_references()
 		
 	# Handle ice wall melting when moving into them
 	if current_form == 0:  # FIRE
 		for i in get_slide_collision_count():
 			var collision = get_slide_collision(i)
 			var collider = collision.get_collider()
-			if collider.has_method("handle_fire_form"):
+			if is_instance_valid(collider) and collider.has_method("handle_fire_form"):
 				collider.handle_fire_form(self)
 
 func _on_area_entered(area: Area2D) -> void:
+	if not is_instance_valid(area):
+		return
 	var parent = area.get_parent()
-	if parent.has_method("handle_fire_form"):
+	if is_instance_valid(parent) and parent.has_method("handle_fire_form"):
 		overlapping_ice_walls.append(parent)
 		if current_form == 0 and not is_changing_form:  # FIRE
 			parent.handle_fire_form(self)
 
 func _on_area_exited(area: Area2D) -> void:
+	if not is_instance_valid(area):
+		return
 	var parent = area.get_parent()
-	overlapping_ice_walls.erase(parent)
+	if is_instance_valid(parent):
+		overlapping_ice_walls.erase(parent)
+
+func _cleanup_ice_wall_references() -> void:
+	"""Remove invalid ice wall references from the array"""
+	for i in range(overlapping_ice_walls.size() - 1, -1, -1):
+		if not is_instance_valid(overlapping_ice_walls[i]):
+			overlapping_ice_walls.remove_at(i)
 
 # Animation System Methods
 func _get_animation_name(base_animation: String) -> String:
@@ -183,7 +370,7 @@ func _get_current_movement_state() -> String:
 
 func _update_movement_animation() -> void:
 	"""Update animation based on current movement and form"""
-	if not animated_sprite or not animated_sprite_body:
+	if not animated_sprite:
 		return
 		
 	var movement_state = _get_current_movement_state()
@@ -197,12 +384,6 @@ func _update_movement_animation() -> void:
 		else:
 			push_warning("Head animation not found: " + animation_name)
 		
-		# Update body animation (same name, different sprite frames)
-		if animated_sprite_body.sprite_frames and animated_sprite_body.sprite_frames.has_animation(animation_name):
-			animated_sprite_body.play(animation_name)
-		else:
-			push_warning("Body animation not found: " + animation_name)
-		
 		last_animation_name = animation_name
 	
 	# Handle sprite direction for walking animations
@@ -210,71 +391,15 @@ func _update_movement_animation() -> void:
 
 func _handle_sprite_direction() -> void:
 	"""Manage sprite flipping based on movement direction"""
-	if not animated_sprite or not animated_sprite_body:
+	if not animated_sprite:
 		return
 		
 	# Only flip for horizontal movement to avoid flipping during jumps/falls
 	if abs(last_horizontal_input) > 0.1 and is_on_floor():
 		var should_flip = last_horizontal_input < 0
 		animated_sprite.flip_h = should_flip
-		animated_sprite_body.flip_h = should_flip
 
-func _get_base_body_position() -> Vector2:
-	"""Get form-specific body position"""
-	if current_form == ElementalForms.Form.FIRE:
-		return fire_body_position
-	else:
-		return water_body_position
 
-func _get_base_head_position() -> Vector2:
-	"""Get form-specific head position"""
-	if current_form == ElementalForms.Form.FIRE:
-		return fire_head_position
-	else:
-		return water_head_position
-
-func _update_step_separation(delta: float) -> void:
-	"""Create step separation effect during walking"""
-	if not animated_sprite_body:
-		return
-	
-	var is_walking = abs(last_horizontal_input) > 0.1 and is_on_floor()
-	var base_position = _get_base_body_position()
-	
-	if is_walking:
-		# Update step timer (controls rhythm of steps)
-		step_timer += delta * 12.0  # Speed of step alternation
-		
-		# Check if we should alternate step (roughly every 0.25 seconds)
-		if step_timer >= 3.0:
-			step_alternate = !step_alternate
-			step_timer = 0.0
-		
-		# Apply alternating vertical offset (reduced for subtlety)
-		var offset_y = step_offset_vertical if step_alternate else -step_offset_vertical
-		
-		# Apply horizontal lean based on walking direction
-		var offset_x = 0.0
-		if last_horizontal_input < 0:  # Walking left
-			offset_x = -step_offset_horizontal
-		elif last_horizontal_input > 0:  # Walking right
-			offset_x = step_offset_horizontal
-		
-		var target_position = base_position + Vector2(offset_x, offset_y)
-		
-		# Smooth transition to new position (avoid creating multiple tweens)
-		if current_step_tween:
-			current_step_tween.kill()
-		current_step_tween = create_tween()
-		current_step_tween.tween_property(animated_sprite_body, "position", target_position, 0.1)
-		
-	else:
-		# Reset to base position when not walking
-		if current_step_tween:
-			current_step_tween.kill()
-		current_step_tween = create_tween()
-		current_step_tween.tween_property(animated_sprite_body, "position", base_position, 0.2)
-		step_timer = 0.0
 
 # Health system methods
 func _on_health_changed(current_health: int, max_health: int) -> void:
@@ -306,34 +431,30 @@ func _on_damaged(_amount: int) -> void:
 
 func _show_healing_effect() -> void:
 	# Blue sparkle effect
-	if not animated_sprite or not animated_sprite_body:
+	if not animated_sprite:
 		return
 		
 	var tween = create_tween()
 	tween.set_parallel(true)
 	tween.tween_property(animated_sprite, "modulate", Color.CYAN, 0.1)
-	tween.tween_property(animated_sprite_body, "modulate", Color.CYAN, 0.1)
 	tween.tween_callback(func(): 
 		var fade_tween = create_tween()
 		fade_tween.set_parallel(true)
 		fade_tween.tween_property(animated_sprite, "modulate", Color.WHITE, 0.3)
-		fade_tween.tween_property(animated_sprite_body, "modulate", Color.WHITE, 0.3)
 	).set_delay(0.1)
 
 func _show_damage_effect() -> void:
 	# Red flash effect
-	if not animated_sprite or not animated_sprite_body:
+	if not animated_sprite:
 		return
 		
 	var tween = create_tween()
 	tween.set_parallel(true)
 	tween.tween_property(animated_sprite, "modulate", Color.RED, 0.1)
-	tween.tween_property(animated_sprite_body, "modulate", Color.RED, 0.1)
 	tween.tween_callback(func(): 
 		var fade_tween = create_tween()
 		fade_tween.set_parallel(true)
 		fade_tween.tween_property(animated_sprite, "modulate", Color.WHITE, 0.2)
-		fade_tween.tween_property(animated_sprite_body, "modulate", Color.WHITE, 0.2)
 	).set_delay(0.1)
 
 func _show_low_health_warning() -> void:

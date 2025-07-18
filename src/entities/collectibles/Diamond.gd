@@ -75,6 +75,10 @@ func _collect_diamond() -> void:
 	# Stop form checking timer
 	form_check_timer.stop()
 	
+	# Disable collision immediately to prevent conflicts
+	if collection_area:
+		call_deferred("_disable_collision")
+	
 	# Emit collection signal
 	collected.emit(diamond_type, points_value)
 	
@@ -139,5 +143,16 @@ func reset_diamond() -> void:
 		sprite.modulate = Color.WHITE
 		sprite.scale = Vector2(1.0, 1.0)
 	
+	# Defer collision shape changes to avoid physics conflicts
 	if collection_area:
-		collection_area.disabled = false 
+		call_deferred("_restore_collision")
+
+func _restore_collision() -> void:
+	"""Safely restore collision detection"""
+	if collection_area:
+		collection_area.disabled = false
+
+func _disable_collision() -> void:
+	"""Safely disable collision detection"""
+	if collection_area:
+		collection_area.disabled = true 

@@ -3,9 +3,13 @@ extends Control
 # EndScreen - Victory celebration and navigation options with progress tracking
 # Shown when player completes the level
 
-@onready var stats_label: Label = $UI/Stats
-@onready var play_again_button: Button = $UI/VBoxContainer/ButtonContainer/PlayAgainButton
-@onready var main_menu_button: Button = $UI/VBoxContainer/ButtonContainer/MainMenuButton
+@onready var title_label: Label = $UI/CenterContainer/VBox/Title
+@onready var score_value: Label = $UI/CenterContainer/VBox/ScorePanel/ScoreContent/ScoreValue
+@onready var diamond_stats: Label = $UI/CenterContainer/VBox/ScorePanel/ScoreContent/Stats/DiamondStats
+@onready var time_stats: Label = $UI/CenterContainer/VBox/ScorePanel/ScoreContent/Stats/TimeStats
+@onready var performance_stats: Label = $UI/CenterContainer/VBox/ScorePanel/ScoreContent/Stats/PerformanceStats
+@onready var play_again_button: Button = $UI/CenterContainer/VBox/ButtonContainer/PlayAgainButton
+@onready var main_menu_button: Button = $UI/CenterContainer/VBox/ButtonContainer/MainMenuButton
 
 var form_switches: int = 0
 var completion_time: float = 0.0
@@ -20,14 +24,17 @@ func _ready() -> void:
 	# Get stats from CollectionManager and save to ProgressManager
 	_save_completion_data()
 	
-	# Update display with stats and record information
-	_update_comprehensive_stats_display()
+	# Update display with clean, modern stats
+	_update_clean_stats_display()
 	
 	# Update button text based on level
 	_update_button_text()
 	
-	# Show celebration based on performance
-	_show_celebration_based_on_performance()
+	# Connect button signals
+	if play_again_button and not play_again_button.pressed.is_connected(_on_play_again_button_pressed):
+		play_again_button.pressed.connect(_on_play_again_button_pressed)
+	if main_menu_button and not main_menu_button.pressed.is_connected(_on_main_menu_button_pressed):
+		main_menu_button.pressed.connect(_on_main_menu_button_pressed)
 
 func _detect_current_level() -> void:
 	"""Detect which level was just completed"""
@@ -45,9 +52,16 @@ func set_completed_level(level: String) -> void:
 func _save_completion_data() -> void:
 	"""Save completion data to ProgressManager and check for records"""
 	if not CollectionManager:
+		print("ERROR: CollectionManager not found!")
 		return
 	
+	# Log CollectionManager state before getting stats
+	print("📊 EndScreen loading - CollectionManager current_score: ", CollectionManager.current_score)
+	
 	completion_data = CollectionManager.get_session_stats()
+	
+	# Confirm we got the stats correctly
+	print("📊 EndScreen loaded - Final Score: %d" % completion_data.get("final_score", 0))
 	
 	# Get previous best stats to check for records
 	var previous_best = ProgressManager.get_best_stats(current_level)
@@ -83,118 +97,77 @@ func _update_button_text() -> void:
 
 func set_completion_stats(_switches: int, _time: float) -> void:
 	"""Legacy method - stats now come from CollectionManager"""
-	_update_comprehensive_stats_display()
+	_update_clean_stats_display()
 
-func _update_comprehensive_stats_display() -> void:
+func _update_clean_stats_display() -> void:
 	if not CollectionManager:
 		return
 		
 	var stats = completion_data
 	
-	# Update stats label with comprehensive information
-	if stats_label:
+	# Update title based on level
+	if title_label:
+		if current_level == "level_2":
+			title_label.text = "LEVEL 2 COMPLETE"
+		else:
+			title_label.text = "LEVEL 1 COMPLETE"
+		
+		# Add new record indicator
+		if is_new_record:
+			title_label.text += " 🏆"
+	
+	# Update final score display
+	if score_value:
+		score_value.text = str(stats.final_score)
+	
+	# Update diamond collection stats
+	if diamond_stats:
+		diamond_stats.text = "💎 %d/%d Diamonds Collected" % [stats.total_collected, stats.total_available]
+		if stats.completion_percent >= 100.0:
+			diamond_stats.text += " ✨"
+	
+	# Update time stats
+	if time_stats:
 		var minutes = int(stats.session_time) / 60
 		var seconds = int(stats.session_time) % 60
 		var time_text = "%02d:%02d" % [minutes, seconds]
+		time_stats.text = "⏱️ Time: %s" % time_text
 		
-		var stats_text = ""
-		
-		# Add new record notification
-		if is_new_record:
-			stats_text += "🏆 NEW RECORD! 🏆\n\n"
-		
-		stats_text += "💎 Diamonds: %d/%d (%.1f%%)\n" % [stats.total_collected, stats.total_available, stats.completion_percent]
-		stats_text += "🔥 Fire: %d/%d  💧 Water: %d/%d\n" % [stats.fire_collected, stats.fire_total, stats.water_collected, stats.water_total]
-		stats_text += "⚡ Form switches: %d\n" % stats.form_switches
-		stats_text += "⏱️ Time: %s\n" % time_text
-		
-		# Show level unlock notification
-		if current_level == "level_1" and ProgressManager.is_level_unlocked("level_2"):
-			var level_2_progress = ProgressManager.get_level_progress("level_2")
-			if level_2_progress.get("total_completions", 0) == 0:
-				stats_text += "\n🎉 LEVEL 2 UNLOCKED! 🎉\n"
-		
-		stats_text += "\n📊 Score Breakdown:\n"
-		stats_text += "Base: %d pts\n" % stats.base_score
+		# Add speed indicator for fast completion
 		if stats.speed_bonus > 0:
-			stats_text += "Speed bonus: +%d pts\n" % stats.speed_bonus
+			time_stats.text += " ⚡"
+	
+	# Update performance stats
+	if performance_stats:
+		performance_stats.text = "🔄 %d Form Switches" % stats.form_switches
+		
+		# Add efficiency indicator
 		if stats.efficiency_bonus > 0:
-			stats_text += "Efficiency bonus: +%d pts\n" % stats.efficiency_bonus
-		if stats.completion_bonus > 0:
-			stats_text += "Perfect collection: +%d pts\n" % stats.completion_bonus
-		stats_text += "FINAL SCORE: %d pts" % stats.final_score
-		
-		stats_label.text = stats_text
-	
-	# Update victory message based on performance
-	_update_victory_message(stats)
-
-func _update_victory_message(stats: Dictionary) -> void:
-	var victory_message = $UI/VBoxContainer/VictoryMessage
-	var celebration = $UI/VBoxContainer/Celebration
-	var victory_title = $UI/VBoxContainer/VictoryTitle
-	
-	if victory_message and celebration and victory_title:
-		# Update title based on level
-		if current_level == "level_2":
-			victory_title.text = "Ascending Chamber Mastered!"
-		else:
-			victory_title.text = "Heartspring Restored!"
-		
-		# Update messages based on performance
-		if stats.completion_percent >= 100.0:
-			if current_level == "level_2":
-				victory_message.text = "Echo conquered the moving platforms!\nEvery crystal collected with perfect timing!"
-			else:
-				victory_message.text = "Echo mastered both elements perfectly!\nEvery crystal found, every heartspring awakened!"
-			celebration.text = "✨🏆 PERFECT MASTERY! 🏆✨"
-		elif stats.completion_percent >= 75.0:
-			if current_level == "level_2":
-				victory_message.text = "Echo's timing skills are impressive!\nMost crystals gathered from the ascending chamber!"
-			else:
-				victory_message.text = "Echo's elemental harmony grows stronger.\nMost ancient crystals have been gathered!"
-			celebration.text = "✨ Excellent Exploration! ✨"
-		elif stats.completion_percent >= 50.0:
-			if current_level == "level_2":
-				victory_message.text = "Echo learns the rhythm of moving platforms.\nThe ascending path reveals its secrets!"
-			else:
-				victory_message.text = "Echo's journey progresses well.\nThe elements begin to respond to your call."
-			celebration.text = "✨ Good Progress! ✨"
-		else:
-			if current_level == "level_2":
-				victory_message.text = "Echo's first ascent into timing mastery.\nThe moving platforms await further practice!"
-			else:
-				victory_message.text = "Echo's first steps into elemental mastery.\nMany crystals await discovery on future journeys."
-			celebration.text = "✨ Journey Begun! ✨"
-
-func _show_celebration_based_on_performance() -> void:
-	"""Future: Add different celebration animations based on performance"""
-	pass
+			performance_stats.text += " 🎯"
 
 func _on_play_again_button_pressed() -> void:
-	"""Handle level progression or replay with proper progress tracking"""
-	if current_level == "level_1" and ProgressManager.is_level_unlocked("level_2"):
-		# Progress to Level 2
-		ProgressManager.record_attempt("level_2")
-		get_tree().change_scene_to_file("res://scenes/levels/Level2.tscn")
-	elif current_level == "level_1":
-		# Replay Level 1
-		ProgressManager.record_attempt("level_1")
-		get_tree().change_scene_to_file("res://scenes/levels/Main.tscn")
-	elif current_level == "level_2":
-		# Replay Level 2
-		ProgressManager.record_attempt("level_2")
-		get_tree().change_scene_to_file("res://scenes/levels/Level2.tscn")
-	else:
-		# Fallback to Level 1
-		ProgressManager.record_attempt("level_1")
-		get_tree().change_scene_to_file("res://scenes/levels/Main.tscn")
+	"""Handle play again button press"""
+	var level_definitions = ProgressManager.level_definitions
+	if level_definitions.has(current_level):
+		var level_def = level_definitions[current_level]
+		var scene_path = level_def["scene_path"]
+		
+		# Check if this was level 1 and level 2 is unlocked
+		if current_level == "level_1" and ProgressManager.is_level_unlocked("level_2"):
+			# Go to level 2
+			var level_2_def = level_definitions.get("level_2", {})
+			if level_2_def.get("implemented", false):
+				scene_path = level_2_def["scene_path"]
+		
+		# Record attempt for the target level
+		var target_level = "level_2" if (current_level == "level_1" and ProgressManager.is_level_unlocked("level_2")) else current_level
+		ProgressManager.record_attempt(target_level)
+		
+		# Load the level scene
+		get_tree().change_scene_to_file(scene_path)
 
 func _on_main_menu_button_pressed() -> void:
 	"""Return to level select menu"""
 	get_tree().change_scene_to_file("res://scenes/ui/menus/LevelSelectMenu.tscn")
 
-# Optional: Add methods for future features
-func _show_celebration_animation() -> void:
-	# Future: Add sparkles, fade-in effects, etc.
-	pass 
+# Legacy method for compatibility - moved to prevent duplication

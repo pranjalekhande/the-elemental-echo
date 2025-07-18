@@ -1,0 +1,54 @@
+[gd_scene load_steps=5 format=3 uid="uid://cxwra03hbfs7m"]
+
+[ext_resource type="PackedScene" path="res://scenes/components/ElementalBackground.tscn" id="1"]
+[ext_resource type="Script" uid="uid://cvmmypd6rywbo" path="res://src/ui/menus/StartMenu.gd" id="2"]
+[ext_resource type="Texture2D" uid="uid://delqjt5x1f4kr" path="res://assets/fireboy_watergirl_main.png" id="3"]
+
+[sub_resource type="Environment" id="Environment_menu"]
+background_mode = 1
+background_color = Color(0.08, 0.1, 0.15, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.4, 0.5, 0.7, 1)
+ambient_light_energy = 0.2
+
+[node name="StartMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2")
+
+[node name="ElementalBackground" parent="." instance=ExtResource("1")]
+layout_mode = 1
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_menu")
+
+[node name="UI" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PlayButton" type="TextureButton" parent="UI"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.82
+anchor_top = 0.87
+anchor_right = 0.95
+anchor_bottom = 0.94
+offset_left = -170.64
+offset_top = -66.76
+offset_right = -140.4
+offset_bottom = -12.12
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("3")
+
+[connection signal="pressed" from="UI/PlayButton" to="." method="_on_play_button_pressed_fallback"] 

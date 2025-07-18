@@ -1,22 +1,22 @@
 [gd_scene load_steps=5 format=4 uid="uid://level_boundaries_component"]
 
-[ext_resource type="TileSet" uid="uid://j1iwarbb7tjq" path="res://resources/modular_platform_tileset.tres" id="1"]
+[ext_resource type="TileSet" uid="uid://cy8r5a35mjmt4" path="res://resources/clean_platformer_tileset.tres" id="1"]
 [ext_resource type="Script" path="res://src/entities/environment/LevelBoundaries.gd" id="2"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_invisible_wall"]
 size = Vector2(32, 2000)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_death_zone"]
-size = Vector2(4000, 100)
+size = Vector2(2400, 100)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ceiling"]
-size = Vector2(4000, 100)
+size = Vector2(2400, 100)
 
 [node name="LevelBoundaries" type="Node2D"]
 script = ExtResource("2")
 
 [node name="MainTileMap" type="TileMap" parent="."]
-tile_set = ExtResource("1")
+visible = false
 format = 2
 
 [node name="PlatformLayer" type="TileMapLayer" parent="MainTileMap"]
@@ -40,7 +40,7 @@ collision_mask = 1
 shape = SubResource("RectangleShape2D_invisible_wall")
 
 [node name="RightWall" type="StaticBody2D" parent="InvisibleBoundaries"]
-position = Vector2(2000, 0)
+position = Vector2(1200, 0)
 collision_layer = 4
 collision_mask = 1
 
@@ -56,16 +56,17 @@ collision_mask = 1
 shape = SubResource("RectangleShape2D_ceiling")
 
 [node name="DeathZone" type="Area2D" parent="InvisibleBoundaries"]
-position = Vector2(0, 400)
+position = Vector2(0, 490)
 collision_layer = 8
 collision_mask = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="InvisibleBoundaries/DeathZone"]
 shape = SubResource("RectangleShape2D_death_zone")
 
-[node name="DebugMarkers" type="Node2D" parent="."]
+[node name="AtmosphericBoundaries" type="Node2D" parent="."]
+modulate = Color(1, 1, 1, 0.1)
 
-[node name="LeftMarker" type="ColorRect" parent="DebugMarkers"]
+[node name="LeftGradient" type="ColorRect" parent="AtmosphericBoundaries"]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -75,28 +76,16 @@ offset_left = -66.0
 offset_top = -500.0
 offset_right = -34.0
 offset_bottom = 500.0
-color = Color(1, 0, 0, 0.2)
+color = Color(0.6, 0.8, 1, 0.1)
 
-[node name="RightMarker" type="ColorRect" parent="DebugMarkers"]
+[node name="RightGradient" type="ColorRect" parent="AtmosphericBoundaries"]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 1984.0
+offset_left = 1184.0
 offset_top = -500.0
-offset_right = 2016.0
+offset_right = 1216.0
 offset_bottom = 500.0
-color = Color(1, 0, 0, 0.2)
-
-[node name="DeathMarker" type="ColorRect" parent="DebugMarkers"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -2000.0
-offset_top = 384.0
-offset_right = 2000.0
-offset_bottom = 416.0
-color = Color(1, 1, 0, 0.2) 
+color = Color(0.6, 0.8, 1, 0.1) 

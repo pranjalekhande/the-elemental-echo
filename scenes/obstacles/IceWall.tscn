@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://src/entities/obstacles/IceWall.gd" id="1"]
 
@@ -8,12 +8,28 @@ size = Vector2(64, 128)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2"]
 size = Vector2(70, 134)
 
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_crystal"]
+blend_mode = 1
+
 [node name="IceWall" type="StaticBody2D"]
 collision_layer = 2
 collision_mask = 1
 script = ExtResource("1")
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="CrystalGlow" type="ColorRect" parent="."]
+material = SubResource("CanvasItemMaterial_crystal")
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -40.0
+offset_top = -72.0
+offset_right = 40.0
+offset_bottom = 72.0
+color = Color(0.7, 0.9, 1, 0.3)
+
+[node name="MainCrystal" type="ColorRect" parent="."]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -23,9 +39,31 @@ offset_left = -32.0
 offset_top = -64.0
 offset_right = 32.0
 offset_bottom = 64.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.6, 0.8, 1, 1)
+color = Color(0.8, 0.95, 1, 0.9)
+
+[node name="CrystalCore" type="ColorRect" parent="MainCrystal"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -32.0
+offset_right = 16.0
+offset_bottom = 32.0
+color = Color(0.9, 1, 1, 0.95)
+
+[node name="InnerLight" type="ColorRect" parent="MainCrystal"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -16.0
+offset_right = 8.0
+offset_bottom = 16.0
+color = Color(1, 1, 1, 0.8)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_1")

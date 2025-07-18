@@ -25,11 +25,19 @@ var efficiency_bonus_max: int = 200
 var completion_bonus_multiplier: float = 2.0
 
 func _ready() -> void:
-	# Reset stats when manager loads
-	reset_session()
+	# Initialize session start time but don't reset score
+	# Score should only be reset when explicitly starting a new level
+	session_start_time = Time.get_unix_time_from_system()
+	print("📋 CollectionManager initialized - preserving existing score: ", current_score)
+	
+	# Emit initial score to update any existing UI components
+	if current_score > 0:
+		score_updated.emit(current_score)
 
 func reset_session() -> void:
 	"""Reset all collection stats for a new level attempt"""
+	print("🔄 Starting new level - resetting score from ", current_score, " to 0")
+	
 	fire_diamonds_collected = 0
 	water_diamonds_collected = 0
 	total_diamonds_collected = 0
@@ -81,6 +89,8 @@ func get_session_stats() -> Dictionary:
 	
 	var final_score = current_score + speed_bonus + efficiency_bonus + completion_bonus
 	
+	print("🎯 Level completed! Base: %d, Bonuses: +%d, Final: %d" % [current_score, (speed_bonus + efficiency_bonus + completion_bonus), final_score])
+	
 	return {
 		"fire_collected": fire_diamonds_collected,
 		"fire_total": total_fire_diamonds_in_level,
@@ -121,7 +131,7 @@ func _calculate_efficiency_bonus() -> int:
 	if excessive_switches == 0:
 		return efficiency_bonus_max
 	elif excessive_switches <= 3:
-		return efficiency_bonus_max / 2.0  # Explicit float division
+		return int(efficiency_bonus_max / 2.0)  # Convert to int
 	else:
 		return 0
 

@@ -1,12 +1,70 @@
-[gd_scene load_steps=2 format=3 uid="uid://level1_background_component"]
+[gd_scene load_steps=5 format=3 uid="uid://b5vvbl5a5l0p0"]
 
-[ext_resource type="Texture2D" path="res://assets/levels/level1.png" id="1_level1_bg"]
+[ext_resource type="Texture2D" uid="uid://nsu8ythqn8jm" path="res://assets/test_assets/Background_0.png" id="1_bg0"]
+[ext_resource type="Texture2D" uid="uid://wrhy0dj2yy7f" path="res://assets/test_assets/Background_1.png" id="2_bg1"]
+[ext_resource type="Texture2D" uid="uid://bd2km2evp27th" path="res://assets/test_assets/Grass_background_1.png" id="3_grass1"]
+[ext_resource type="Texture2D" uid="uid://ksl7rj4673cx" path="res://assets/test_assets/Grass_background_2.png" id="4_grass2"]
 
 [node name="Level1Background" type="Node2D"]
 z_index = -100
 
-[node name="BackgroundImage" type="Sprite2D" parent="."]
-position = Vector2(-100, -50)
-scale = Vector2(8, 8)
-texture = ExtResource("1_level1_bg")
-centered = true 
+[node name="SkyLayer" type="ParallaxBackground" parent="."]
+
+[node name="FarBackground" type="ParallaxLayer" parent="SkyLayer"]
+motion_scale = Vector2(0.1, 0.1)
+
+[node name="BackgroundSprite3" type="Sprite2D" parent="SkyLayer/FarBackground"]
+position = Vector2(1519, 155)
+scale = Vector2(2, 2)
+texture = ExtResource("1_bg0")
+
+[node name="BackgroundSprite2" type="Sprite2D" parent="SkyLayer/FarBackground"]
+position = Vector2(1532, -11)
+scale = Vector2(2, 2)
+texture = ExtResource("1_bg0")
+
+[node name="BackgroundSprite" type="Sprite2D" parent="SkyLayer/FarBackground"]
+position = Vector2(776, -6)
+scale = Vector2(2, 2)
+texture = ExtResource("1_bg0")
+
+[node name="MidBackground" type="ParallaxLayer" parent="SkyLayer"]
+motion_scale = Vector2(0.3, 0.3)
+
+[node name="MidSprite" type="Sprite2D" parent="SkyLayer/MidBackground"]
+position = Vector2(954, 104)
+scale = Vector2(2.5, 2.5)
+texture = ExtResource("2_bg1")
+
+[node name="ForegroundLayer" type="ParallaxLayer" parent="SkyLayer"]
+position = Vector2(-10, 8)
+motion_scale = Vector2(0.6, 0.6)
+
+[node name="GrassSprite1" type="Sprite2D" parent="SkyLayer/ForegroundLayer"]
+position = Vector2(438, 352)
+scale = Vector2(2.5, 2.5)
+texture = ExtResource("3_grass1")
+
+[node name="GrassSprite1" type="Sprite2D" parent="SkyLayer/ForegroundLayer/GrassSprite1"]
+position = Vector2(566.8, 3.20001)
+texture = ExtResource("3_grass1")
+
+[node name="GrassSprite2" type="Sprite2D" parent="SkyLayer/ForegroundLayer"]
+position = Vector2(1308, 350)
+scale = Vector2(2.5, 2.5)
+texture = ExtResource("4_grass2")
+
+[node name="EnvironmentalLayer" type="ParallaxLayer" parent="SkyLayer"]
+motion_scale = Vector2(0.8, 0.8)
+
+[node name="AtmosphericGrass1" type="Sprite2D" parent="SkyLayer/EnvironmentalLayer"]
+modulate = Color(0.8, 0.9, 1, 0.6)
+position = Vector2(766, 450)
+scale = Vector2(2, 2)
+texture = ExtResource("3_grass1")
+
+[node name="AtmosphericGrass2" type="Sprite2D" parent="SkyLayer/EnvironmentalLayer"]
+modulate = Color(0.8, 0.9, 1, 0.6)
+position = Vector2(542, 440)
+scale = Vector2(2, 2)
+texture = ExtResource("4_grass2")
