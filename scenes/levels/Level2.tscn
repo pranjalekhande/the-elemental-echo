@@ -1,7 +1,7 @@
-[gd_scene load_steps=15 format=3 uid="uid://bwldrss3bm623"]
+[gd_scene load_steps=18 format=3 uid="uid://bwldrss3bm623"]
 
 [ext_resource type="PackedScene" uid="uid://c258t6ukqdor4" path="res://scenes/player/Echo.tscn" id="1"]
-[ext_resource type="PackedScene" path="res://scenes/components/CaveBackground.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://b5vvbl5a5l0p0" path="res://scenes/components/Level1Background.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/components/LevelBoundaries.tscn" id="3"]
 [ext_resource type="PackedScene" path="res://scenes/obstacles/IceWall.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/interactables/Heartspring.tscn" id="5"]
@@ -10,7 +10,9 @@
 [ext_resource type="PackedScene" path="res://scenes/collectibles/WaterDiamond.tscn" id="8"]
 [ext_resource type="Script" uid="uid://ygs13stfc61j" path="res://src/levels/Level2.gd" id="9"]
 [ext_resource type="PackedScene" path="res://scenes/components/MovingPlatform.tscn" id="10"]
-[ext_resource type="PackedScene" uid="uid://bq2fk8j3hl2nc" path="res://scenes/ui/components/ScoreDisplay.tscn" id="11"]
+[ext_resource type="PackedScene" path="res://scenes/ui/components/ScoreDisplay.tscn" id="11"]
+[ext_resource type="Texture2D" uid="uid://cdi22dhmffv1m" path="res://assets/test_assets/Tiles.png" id="12"]
+[ext_resource type="Texture2D" uid="uid://d57q0clj1p6h" path="res://assets/platformPack_tile048.png" id="13"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_large"]
 size = Vector2(400, 32)
@@ -27,200 +29,157 @@ size = Vector2(300, 200)
 [node name="Level2" type="Node2D"]
 script = ExtResource("9")
 
-[node name="CaveBackground" parent="." instance=ExtResource("2")]
+[node name="Level1Background" parent="." instance=ExtResource("2")]
 
 [node name="LevelBoundaries" parent="." instance=ExtResource("3")]
-position = Vector2(600, 200)
+position = Vector2(950, 200)
 
 [node name="Echo" parent="." instance=ExtResource("1")]
-position = Vector2(100, 400)
+position = Vector2(120, 380)
 
 [node name="Platforms" type="Node2D" parent="."]
 
 [node name="StartPlatform" type="StaticBody2D" parent="Platforms"]
-position = Vector2(100, 450)
+position = Vector2(120, 430)
 collision_layer = 2
 
-[node name="PlatformVisual" type="ColorRect" parent="Platforms/StartPlatform"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -200.0
-offset_top = -16.0
-offset_right = 200.0
-offset_bottom = 16.0
-color = Color(0.6, 0.4, 0.2, 1)
+[node name="PlatformVisual" type="Sprite2D" parent="Platforms/StartPlatform"]
+scale = Vector2(3, 1)
+texture = ExtResource("12")
+region_enabled = true
+region_rect = Rect2(64, 250, 128, 26)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/StartPlatform"]
 shape = SubResource("RectangleShape2D_large")
 
 [node name="Platform1" type="StaticBody2D" parent="Platforms"]
-position = Vector2(350, 370)
+position = Vector2(459, 336)
 collision_layer = 2
 
-[node name="PlatformVisual" type="ColorRect" parent="Platforms/Platform1"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -120.0
-offset_top = -16.0
-offset_right = 120.0
-offset_bottom = 16.0
-color = Color(0.6, 0.4, 0.2, 1)
+[node name="PlatformVisual" type="Sprite2D" parent="Platforms/Platform1"]
+scale = Vector2(1.8, 1)
+texture = ExtResource("12")
+region_enabled = true
+region_rect = Rect2(64, 250, 128, 26)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Platform1"]
 shape = SubResource("RectangleShape2D_medium")
 
 [node name="Platform2" type="StaticBody2D" parent="Platforms"]
-position = Vector2(600, 290)
+position = Vector2(729, 255)
 collision_layer = 2
 
-[node name="PlatformVisual" type="ColorRect" parent="Platforms/Platform2"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -120.0
-offset_top = -16.0
-offset_right = 120.0
-offset_bottom = 16.0
-color = Color(0.6, 0.4, 0.2, 1)
+[node name="PlatformVisual" type="Sprite2D" parent="Platforms/Platform2"]
+scale = Vector2(1.8, 1)
+texture = ExtResource("12")
+region_enabled = true
+region_rect = Rect2(64, 250, 128, 26)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Platform2"]
 shape = SubResource("RectangleShape2D_medium")
 
-[node name="Platform5" type="StaticBody2D" parent="Platforms"]
-position = Vector2(1350, 50)
-collision_layer = 2
-
-[node name="PlatformVisual" type="ColorRect" parent="Platforms/Platform5"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -120.0
-offset_top = -16.0
-offset_right = 120.0
-offset_bottom = 16.0
-color = Color(0.2, 0.8, 0.2, 1)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Platform5"]
-shape = SubResource("RectangleShape2D_medium")
-
 [node name="Platform4" type="StaticBody2D" parent="Platforms"]
-position = Vector2(1100, 130)
+position = Vector2(1472, 38)
 collision_layer = 2
 
-[node name="PlatformVisual" type="ColorRect" parent="Platforms/Platform4"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -80.0
-offset_top = -16.0
-offset_right = 80.0
-offset_bottom = 16.0
-color = Color(0.6, 0.4, 0.2, 1)
+[node name="PlatformVisual" type="Sprite2D" parent="Platforms/Platform4"]
+scale = Vector2(1.2, 1)
+texture = ExtResource("12")
+region_enabled = true
+region_rect = Rect2(64, 250, 128, 26)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Platform4"]
 shape = SubResource("RectangleShape2D_small")
 
-[node name="BridgePlatform" type="StaticBody2D" parent="Platforms"]
-position = Vector2(850, 210)
+[node name="Platform3" type="StaticBody2D" parent="Platforms"]
+position = Vector2(1135, 140)
 collision_layer = 2
 
-[node name="PlatformVisual" type="ColorRect" parent="Platforms/BridgePlatform"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -80.0
-offset_top = -16.0
-offset_right = 80.0
-offset_bottom = 16.0
-color = Color(0.6, 0.4, 0.2, 1)
+[node name="BridgePlatform" type="StaticBody2D" parent="Platforms"]
+position = Vector2(1635, 38)
+collision_layer = 2
+
+[node name="PlatformVisual" type="Sprite2D" parent="Platforms/BridgePlatform"]
+scale = Vector2(1.2, 1)
+texture = ExtResource("12")
+region_enabled = true
+region_rect = Rect2(64, 250, 128, 26)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/BridgePlatform"]
 shape = SubResource("RectangleShape2D_small")
 
 [node name="UpperPlatform" type="StaticBody2D" parent="Platforms"]
-position = Vector2(1500, -30)
+position = Vector2(1805, 219)
 collision_layer = 2
 
-[node name="PlatformVisual" type="ColorRect" parent="Platforms/UpperPlatform"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -80.0
-offset_top = -16.0
-offset_right = 80.0
-offset_bottom = 16.0
-color = Color(0.2, 0.8, 0.2, 1)
+[node name="PlatformVisual" type="Sprite2D" parent="Platforms/UpperPlatform"]
+scale = Vector2(1.2, 1)
+texture = ExtResource("12")
+region_enabled = true
+region_rect = Rect2(64, 250, 128, 26)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/UpperPlatform"]
 shape = SubResource("RectangleShape2D_small")
 
 [node name="MovingPlatform" parent="." instance=ExtResource("10")]
-position = Vector2(750, 240)
-move_distance = 100.0
-move_speed = 45.0
+position = Vector2(1052, 261)
+move_distance = 140.0
+move_speed = 50.0
 
 [node name="IceWall" parent="." instance=ExtResource("4")]
-position = Vector2(950, 180)
+position = Vector2(1300, 90)
+
+[node name="Door" type="Sprite2D" parent="."]
+position = Vector2(1808, 145)
+scale = Vector2(1.23333, 1.79614)
+texture = ExtResource("13")
+region_enabled = true
+region_rect = Rect2(-0.25, 0.625, 65.5, 63.5)
 
 [node name="Heartspring" parent="." instance=ExtResource("5")]
-position = Vector2(1500, -80)
+visible = false
+position = Vector2(1808, 153)
 
 [node name="StartText" type="Area2D" parent="."]
-position = Vector2(250, 350)
+position = Vector2(200, 380)
 script = ExtResource("6")
-trigger_message = "Welcome to the ascending chamber! Moving platforms require timing."
+trigger_message = "Welcome to the ascending chamber! Master timing and form-switching."
 show_once = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StartText"]
 shape = SubResource("RectangleShape2D_text")
 
 [node name="IceWallText" type="Area2D" parent="."]
-position = Vector2(950, 120)
+position = Vector2(1300, 50)
 script = ExtResource("6")
-trigger_message = "Ice blocks the upper path. Fire form can clear the way."
+trigger_message = "Ice blocks your path! Switch to Fire form (Q) to melt through."
 show_once = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="IceWallText"]
 shape = SubResource("RectangleShape2D_text")
 
 [node name="GoalText" type="Area2D" parent="."]
-position = Vector2(1400, -50)
+position = Vector2(1700, -20)
 script = ExtResource("6")
-trigger_message = "Four diamonds gathered! The Heartspring awaits your touch."
+trigger_message = "Five diamonds collected! The door awaits - victory is near!"
 show_once = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="GoalText"]
 shape = SubResource("RectangleShape2D_text")
 
 [node name="MovingPlatformText" type="Area2D" parent="."]
-position = Vector2(750, 180)
+position = Vector2(750, 220)
 script = ExtResource("6")
-trigger_message = "The platform moves slowly. Switch forms while riding!"
+trigger_message = "Time your jump to the moving platform! Only way forward."
 show_once = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MovingPlatformText"]
 shape = SubResource("RectangleShape2D_text")
 
 [node name="ChallengeText" type="Area2D" parent="."]
-position = Vector2(1100, 70)
+position = Vector2(1120, 100)
 script = ExtResource("6")
-trigger_message = "Master the timing - when to switch, when to jump, when to collect."
+trigger_message = "Success! Moving platform mastery unlocks the upper path."
 show_once = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ChallengeText"]
@@ -256,20 +215,20 @@ text = "The Elemental Echo - Level 2: Ascending Echoes"
 
 [node name="Diamonds" type="Node2D" parent="."]
 
-[node name="StartFireDiamond" parent="Diamonds" instance=ExtResource("7")]
-position = Vector2(100, 400)
+[node name="EarlyFireDiamond" parent="Diamonds" instance=ExtResource("7")]
+position = Vector2(459, 286)
 
-[node name="EarlyWaterDiamond" parent="Diamonds" instance=ExtResource("8")]
-position = Vector2(350, 320)
+[node name="PreMovingWaterDiamond" parent="Diamonds" instance=ExtResource("8")]
+position = Vector2(729, 205)
 
-[node name="MovingFireDiamond" parent="Diamonds" instance=ExtResource("7")]
-position = Vector2(750, 160)
+[node name="MovingPlatformFireDiamond" parent="Diamonds" instance=ExtResource("7")]
+position = Vector2(1069, 20)
 
-[node name="ChallengeWaterDiamond" parent="Diamonds" instance=ExtResource("8")]
-position = Vector2(1100, 80)
+[node name="PostBridgeWaterDiamond" parent="Diamonds" instance=ExtResource("8")]
+position = Vector2(1655, -31)
 
-[node name="GoalFireDiamond" parent="Diamonds" instance=ExtResource("7")]
-position = Vector2(1500, -80)
+[node name="VictoryFireDiamond" parent="Diamonds" instance=ExtResource("7")]
+position = Vector2(1841, 105)
 
 [connection signal="body_entered" from="StartText" to="StartText" method="_on_body_entered"]
 [connection signal="body_entered" from="IceWallText" to="IceWallText" method="_on_body_entered"]

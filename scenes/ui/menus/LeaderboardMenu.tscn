@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://bv4dqxh3y1234"]
 
-[ext_resource type="Script" path="res://src/ui/menus/LeaderboardMenu.gd" id="1_leaderboard_menu"]
+[ext_resource type="Script" uid="uid://bul2yhpeoi364" path="res://src/ui/menus/LeaderboardMenu.gd" id="1_leaderboard_menu"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_background"]
 bg_color = Color(0.1, 0.15, 0.2, 0.95)
@@ -17,40 +17,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_leaderboard_menu")
-
-[node name="BackArrowButton" type="Button" parent="."]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 0.0
-anchor_bottom = 0.0
-offset_left = 30.0
-offset_top = 30.0
-offset_right = 130.0
-offset_bottom = 80.0
-grow_vertical = 0
-z_index = 100
-theme_override_font_sizes/font_size = 28
-text = "← Back"
-flat = false
-
-[node name="SettingsIconButton" type="Button" parent="."]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -70.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = 70.0
-grow_horizontal = 0
-z_index = 100
-flat = true
-theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 0.9)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.5)
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
-theme_override_font_sizes/font_size = 32
-text = "⚙️"
 
 [node name="Background" type="Panel" parent="."]
 layout_mode = 1
@@ -91,6 +57,3 @@ size_flags_vertical = 3
 [node name="Spacer2" type="Control" parent="VBox"]
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
-
-[connection signal="pressed" from="BackArrowButton" to="." method="_on_back_button_pressed"]
-[connection signal="pressed" from="SettingsIconButton" to="." method="_on_settings_button_pressed"] 

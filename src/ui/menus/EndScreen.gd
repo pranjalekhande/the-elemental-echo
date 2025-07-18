@@ -264,73 +264,20 @@ func _on_name_canceled() -> void:
 
 func _submit_score_with_name(player_name: String, final_score: int) -> void:
 	"""Submit score to leaderboard with specified name"""
-	print("📊 Score details:")
-	print("   Final score: ", final_score)
-	print("   Player name: '%s'" % player_name)
+	print("📊 Submitting score: %s - %d points" % [player_name, final_score])
 	
-	# Try to access NetworkManager directly (alternative to Engine.has_singleton)
-	var nm = null
-	if Engine.has_singleton("NetworkManager"):
-		print("✅ NetworkManager singleton found via Engine.has_singleton")
-		nm = Engine.get_singleton("NetworkManager")
-	else:
-		print("⚠️ NetworkManager not found via Engine.has_singleton, trying direct access...")
-		# Try direct access to the autoload
-		if get_tree().has_method("get_first_node_in_group"):
-			var autoloads = get_tree().get_nodes_in_group("autoload")
-			for node in autoloads:
-				if node.name == "NetworkManager":
-					nm = node
-					print("✅ Found NetworkManager via direct access")
-					break
-		
-		# Try accessing via /root/ path
-		if not nm:
-			var root_nm = get_tree().get_root().get_node_or_null("NetworkManager")
-			if root_nm:
-				nm = root_nm
-				print("✅ Found NetworkManager via /root/ path")
-	
-	if nm:
-		print("📋 NetworkManager found! State:")
-		print("   Player name: '", nm.player_name, "'")
-		print("   Is host: ", nm.is_host)
-		
-		# Check if in multiplayer mode
-		var has_peer = false
-		if nm.has_method("get_multiplayer") or "multiplayer" in nm:
-			var mp = nm.multiplayer
-			if mp and mp.multiplayer_peer != null:
-				has_peer = true
-				print("🌐 Multiplayer peer detected - submitting via NetworkManager")
-				nm.submit_score(final_score)
-			else:
-				print("🏠 Solo mode detected - no multiplayer peer")
-		else:
-			print("⚠️ No multiplayer property found")
-	else:
-		print("❌ NetworkManager not accessible via any method")
-	
-	# Try to access LeaderboardService directly
-	print("💾 Submitting to LeaderboardService...")
+	# Direct submission to LeaderboardService (works for solo and multiplayer)
 	var lbs = null
 	if Engine.has_singleton("LeaderboardService"):
-		print("✅ LeaderboardService singleton found via Engine.has_singleton")
 		lbs = Engine.get_singleton("LeaderboardService")
 	else:
-		print("⚠️ LeaderboardService not found via Engine.has_singleton, trying direct access...")
-		# Try direct access via /root/ path
-		var root_lbs = get_tree().get_root().get_node_or_null("LeaderboardService")
-		if root_lbs:
-			lbs = root_lbs
-			print("✅ Found LeaderboardService via /root/ path")
+		lbs = get_tree().get_root().get_node_or_null("LeaderboardService")
 	
 	if lbs:
-		print("✅ LeaderboardService found! Calling add_score_force...")
-		lbs.add_score_force(player_name, final_score)
-		print("📈 Score submitted to leaderboard: %s - %d points" % [player_name, final_score])
+		lbs.add_score(player_name, final_score)
+		print("✅ Score submitted successfully")
 	else:
-		print("❌ LeaderboardService not accessible via any method")
+		print("❌ LeaderboardService not found")
 
 func _add_leaderboard_button() -> void:
 	"""Add a leaderboard button to the button container"""

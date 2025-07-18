@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=2 format=3 uid="uid://dsn8dp4rg5bva"]
 
-[ext_resource type="Script" path="res://src/ui/components/LeaderboardPanel.gd" id="1"]
+[ext_resource type="Script" uid="uid://couyqxi3iisgn" path="res://src/ui/components/LeaderboardPanel.gd" id="1"]
 
 [node name="LeaderboardPanel" type="Control"]
-script = ExtResource("1") 
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1")
