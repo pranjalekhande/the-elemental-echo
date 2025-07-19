@@ -1,9 +1,10 @@
 [gd_scene load_steps=4 format=4]
 
 [ext_resource type="Script" path="res://src/entities/collectibles/FireDiamond.gd" id="1"]
+[ext_resource type="SpriteFrames" uid="uid://bq8h4x2cvfm7r" path="res://resources/gem_sprite_frames.tres" id="2_gems"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_collection"]
-radius = 40.0
+radius = 100.0
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_glow"]
 blend_mode = 1
@@ -31,19 +32,10 @@ offset_bottom = 32.0
 rotation = 0.785398
 color = Color(1, 0.4, 0.1, 0.3)
 
-[node name="Sprite" type="ColorRect" parent="."]
-material = SubResource("CanvasItemMaterial_glow")
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -20.0
-offset_right = 20.0
-offset_bottom = 20.0
-rotation = 0.785398
-color = Color(1, 0.6, 0.2, 0.95)
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_gems")
+animation = &"red_idle"
+scale = Vector2(0.625, 0.625)
 
 [node name="InnerGlow" type="ColorRect" parent="Sprite"]
 anchors_preset = 8

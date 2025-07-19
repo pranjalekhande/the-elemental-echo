@@ -217,18 +217,23 @@ text = "The Elemental Echo - Level 2: Ascending Echoes"
 
 [node name="EarlyFireDiamond" parent="Diamonds" instance=ExtResource("7")]
 position = Vector2(459, 286)
+scale = Vector2(0.229618, 0.273867)
 
 [node name="PreMovingWaterDiamond" parent="Diamonds" instance=ExtResource("8")]
 position = Vector2(729, 205)
+scale = Vector2(0.229618, 0.273867)
 
 [node name="MovingPlatformFireDiamond" parent="Diamonds" instance=ExtResource("7")]
 position = Vector2(1069, 20)
+scale = Vector2(0.229618, 0.273867)
 
 [node name="PostBridgeWaterDiamond" parent="Diamonds" instance=ExtResource("8")]
 position = Vector2(1655, -31)
+scale = Vector2(0.229618, 0.273867)
 
 [node name="VictoryFireDiamond" parent="Diamonds" instance=ExtResource("7")]
 position = Vector2(1841, 105)
+scale = Vector2(0.229618, 0.273867)
 
 [connection signal="body_entered" from="StartText" to="StartText" method="_on_body_entered"]
 [connection signal="body_entered" from="IceWallText" to="IceWallText" method="_on_body_entered"]

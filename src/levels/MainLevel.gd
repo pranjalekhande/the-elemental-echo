@@ -124,6 +124,7 @@ func _store_initial_level_state() -> void:
 			var diamond_data = {
 				"name": diamond.name,
 				"position": diamond.position,
+				"scale": diamond.scale,
 				"scene_path": diamond.scene_file_path if diamond.scene_file_path else "",
 				"type": "fire" if diamond.name.contains("Fire") else "water"
 			}
@@ -135,6 +136,7 @@ func _store_initial_level_state() -> void:
 		initial_ice_wall_data = {
 			"name": ice_wall.name,
 			"position": ice_wall.position,
+			"scale": ice_wall.scale,
 			"scene_path": ice_wall.scene_file_path if ice_wall.scene_file_path else "res://scenes/obstacles/IceWall.tscn"
 		}
 	
@@ -174,6 +176,11 @@ func _reset_diamonds() -> void:
 	for child in diamonds_node.get_children():
 		if child.has_method("reset_diamond"):
 			child.reset_diamond()
+			# Restore original scale from stored data
+			for diamond_data in initial_diamond_data:
+				if diamond_data.name == child.name:
+					child.scale = diamond_data.scale
+					break
 			reset_count += 1
 	
 	# If we have fewer diamonds than expected, recreate missing ones
@@ -195,6 +202,7 @@ func _reset_diamonds() -> void:
 				
 				diamond_instance.name = diamond_data.name
 				diamond_instance.position = diamond_data.position
+				diamond_instance.scale = diamond_data.scale  # Preserve original scale
 				diamonds_node.add_child(diamond_instance)
 				created_count += 1
 	
@@ -215,6 +223,7 @@ func _reset_ice_walls() -> void:
 		
 		ice_wall_instance.name = initial_ice_wall_data.name
 		ice_wall_instance.position = initial_ice_wall_data.position
+		ice_wall_instance.scale = initial_ice_wall_data.scale  # Preserve original scale
 		add_child(ice_wall_instance)
 		
 	

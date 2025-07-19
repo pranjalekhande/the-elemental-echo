@@ -40,18 +40,18 @@ func _on_play_button_clicked(viewport: Node, event: InputEvent, shape_idx: int) 
 		_play_click_animation()
 
 func _play_click_animation() -> void:
-	# Play the water dip animation, then navigate
+	# Play the water dip animation, then show welcome dialog
 	if play_button_animated_sprite and play_button_animated_sprite.sprite_frames:
 		print("🌊 Playing click_dip animation...")
 		play_button_animated_sprite.play("click_dip")
-		# Wait for animation to finish, then navigate
+		# Wait for animation to finish, then show welcome dialog
 		await play_button_animated_sprite.animation_finished
-		print("✅ Animation finished, navigating to level select...")
-		get_tree().change_scene_to_file("res://scenes/ui/menus/LevelSelectMenu.tscn")
+		print("✅ Animation finished, showing welcome dialog...")
+		_show_welcome_dialog()
 	else:
 		print("❌ Could not find animated sprite or sprite frames")
-		# Fallback: navigate immediately if animation fails
-		get_tree().change_scene_to_file("res://scenes/ui/menus/LevelSelectMenu.tscn")
+		# Fallback: show welcome dialog immediately if animation fails
+		_show_welcome_dialog()
 
 func _on_menu_resized() -> void:
 	"""Handle menu resize to scale elements appropriately"""
@@ -89,9 +89,54 @@ func _on_play_button_gui_input(event: InputEvent) -> void:
 		print("🎮 Play button clicked! (via Control gui_input)")
 		_play_click_animation()
 
+func _show_welcome_dialog() -> void:
+	"""Show the player welcome dialog overlay"""
+	print("🎮 Loading welcome dialog...")
+	
+	# Load and instantiate the welcome dialog
+	if ResourceLoader.exists("res://scenes/ui/components/PlayerWelcomeDialog.tscn"):
+		var dialog_scene: PackedScene = load("res://scenes/ui/components/PlayerWelcomeDialog.tscn")
+		var dialog: Control = dialog_scene.instantiate()
+		
+		print("✅ Welcome dialog instantiated, adding to scene...")
+		# Add dialog to scene
+		add_child(dialog)
+		
+		print("🔗 Connecting welcome dialog signals...")
+		# Connect signals
+		dialog.welcome_completed.connect(_on_welcome_completed)
+		dialog.dialog_skipped.connect(_on_welcome_skipped)
+		
+		print("📊 Signal connections:")
+		print("   welcome_completed connected: ", dialog.welcome_completed.is_connected(_on_welcome_completed))
+		print("   dialog_skipped connected: ", dialog.dialog_skipped.is_connected(_on_welcome_skipped))
+		
+		# Show dialog
+		print("👀 Showing welcome dialog...")
+		dialog.show_welcome_dialog()
+		print("✅ Welcome dialog flow initiated")
+	else:
+		print("❌ PlayerWelcomeDialog scene not found, falling back to direct navigation")
+		_navigate_to_level_select()
+
+func _on_welcome_completed(player_name: String) -> void:
+	"""Handle welcome dialog completion"""
+	print("🎉 Welcome completed for player: '%s'" % player_name)
+	_navigate_to_level_select()
+
+func _on_welcome_skipped() -> void:
+	"""Handle welcome dialog skip"""
+	print("⚠️ Welcome dialog skipped")
+	_navigate_to_level_select()
+
+func _navigate_to_level_select() -> void:
+	"""Navigate to the level select menu"""
+	print("🚀 Navigating to level select menu...")
+	get_tree().change_scene_to_file("res://scenes/ui/menus/LevelSelectMenu.tscn")
+
 # Fallback method for simple TextureButton
 func _on_play_button_pressed_fallback() -> void:
-	get_tree().change_scene_to_file("res://scenes/ui/menus/LevelSelectMenu.tscn")
+	_show_welcome_dialog()
 
 func _initialize_solo_host() -> void:
 	"""Initialize NetworkManager as host for solo play leaderboard functionality"""

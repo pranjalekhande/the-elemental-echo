@@ -1,0 +1,54 @@
+[gd_resource type="SpriteFrames" load_steps=6 format=3 uid="uid://dvdqwpp2o8xtg"]
+
+[ext_resource type="Texture2D" uid="uid://ba4qqmv8lwwo2" path="res://assets/collectibles/gemspack.png" id="2_j83s2"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8f1ar"]
+atlas = ExtResource("2_j83s2")
+region = Rect2(109, 290, 411, 392)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j83s2"]
+atlas = ExtResource("2_j83s2")
+region = Rect2(109, 290, 411, 392)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4d2rh"]
+atlas = ExtResource("2_j83s2")
+region = Rect2(531, 290, 411, 392)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bwst5"]
+atlas = ExtResource("2_j83s2")
+region = Rect2(531, 290, 411, 392)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8f1ar")
+}],
+"loop": true,
+"name": &"blue_idle",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j83s2")
+}],
+"loop": true,
+"name": &"blue_sparkle",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4d2rh")
+}],
+"loop": true,
+"name": &"red_idle",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bwst5")
+}],
+"loop": true,
+"name": &"red_sparkle",
+"speed": 2.0
+}]

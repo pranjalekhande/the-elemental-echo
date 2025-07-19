@@ -184,24 +184,28 @@ shape = SubResource("RectangleShape2D_platform_end")
 [node name="Diamonds" type="Node2D" parent="."]
 
 [node name="StartFireDiamond" parent="Diamonds" instance=ExtResource("7")]
-position = Vector2(248, 351)
-scale = Vector2(0.852881, 0.646317)
+position = Vector2(255, 370)
+scale = Vector2(0.229618, 0.273867)
 
 [node name="Platform2WaterDiamond" parent="Diamonds" instance=ExtResource("8")]
 position = Vector2(416, 249)
-scale = Vector2(0.867618, 0.684215)
+scale = Vector2(0.229618, 0.273867)
 
 [node name="Platform3FireDiamond" parent="Diamonds" instance=ExtResource("7")]
 position = Vector2(679, 360)
+scale = Vector2(0.229618, 0.273867)
 
 [node name="Platform4WaterDiamond" parent="Diamonds" instance=ExtResource("8")]
 position = Vector2(1005, 359)
+scale = Vector2(0.229618, 0.273867)
 
 [node name="Platform5FireDiamond" parent="Diamonds" instance=ExtResource("7")]
 position = Vector2(1234, 351)
+scale = Vector2(0.229618, 0.273867)
 
 [node name="GoalWaterDiamond" parent="Diamonds" instance=ExtResource("8")]
 position = Vector2(1507, 342)
+scale = Vector2(0.229618, 0.273867)
 
 [connection signal="body_entered" from="StartText" to="StartText" method="_on_body_entered"]
 [connection signal="body_entered" from="IceWallText" to="IceWallText" method="_on_body_entered"]

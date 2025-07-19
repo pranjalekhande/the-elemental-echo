@@ -10,7 +10,7 @@ signal collected(diamond_type: String, points: int)
 @export var points_value: int = 10
 @export var required_form: String = "any"  # Form required to collect this diamond
 
-@onready var sprite: CanvasItem = $Sprite  # Will be ColorRect or Sprite2D
+@onready var sprite: CanvasItem = $Sprite  # Can be ColorRect or AnimatedSprite2D
 @onready var particles: Node2D = $Particles  # Particle effects
 @onready var collection_area: CollisionShape2D = $CollisionShape2D
 
@@ -94,7 +94,7 @@ func _collect_diamond() -> void:
 		CollectionManager.collect_diamond(diamond_type, points_value)
 	
 	# Remove from scene after animation
-	var timer = get_tree().create_timer(0.5)
+	var timer = get_tree().create_timer(0.8)  # Longer timer for enhanced animations
 	timer.timeout.connect(queue_free)
 
 func _update_visual_state() -> void:
@@ -103,26 +103,41 @@ func _update_visual_state() -> void:
 		return
 		
 	if sprite:
-		if echo_in_range and compatible_form:
-			# Bright, active state
-			sprite.modulate = Color.WHITE
-			sprite.scale = Vector2(1.2, 1.2)
-		elif echo_in_range and not compatible_form:
-			# Dimmed, incompatible state
-			sprite.modulate = Color(0.5, 0.5, 0.5, 0.7)
-			sprite.scale = Vector2(1.0, 1.0)
+		# Handle both ColorRect (legacy) and AnimatedSprite2D (new gems)
+		if sprite is AnimatedSprite2D:
+			# This method should be overridden in subclasses for specific animations
+			pass
 		else:
-			# Normal state
-			sprite.modulate = Color.WHITE
-			sprite.scale = Vector2(1.0, 1.0)
+			# Legacy ColorRect handling
+			if echo_in_range and compatible_form:
+				# Bright, active state
+				sprite.modulate = Color.WHITE
+				sprite.scale = Vector2(1.2, 1.2)
+			elif echo_in_range and not compatible_form:
+				# Dimmed, incompatible state
+				sprite.modulate = Color(0.5, 0.5, 0.5, 0.7)
+				sprite.scale = Vector2(1.0, 1.0)
+			else:
+				# Normal state
+				sprite.modulate = Color.WHITE
+				sprite.scale = Vector2(1.0, 1.0)
 
 func _play_collection_animation() -> void:
 	"""Override in subclasses for specific visual effects"""
 	if sprite:
-		# Simple scale-up and fade out
+		# Enhanced base animation
 		var tween = create_tween()
-		tween.parallel().tween_property(sprite, "scale", Vector2(2.0, 2.0), 0.3)
-		tween.parallel().tween_property(sprite, "modulate:a", 0.0, 0.3)
+		tween.set_parallel(true)
+		
+		if sprite is AnimatedSprite2D:
+			# Enhanced animation for new gems - subclasses should override
+			tween.tween_property(sprite, "scale", Vector2(2.5, 2.5), 0.4)
+			tween.tween_property(sprite, "modulate:a", 0.0, 0.4)
+			tween.tween_property(sprite, "rotation", TAU, 0.4)
+		else:
+			# Legacy ColorRect animation
+			tween.tween_property(sprite, "scale", Vector2(2.0, 2.0), 0.3)
+			tween.tween_property(sprite, "modulate:a", 0.0, 0.3)
 
 # Virtual methods for subclasses to override
 func get_diamond_color() -> Color:
@@ -145,7 +160,16 @@ func reset_diamond() -> void:
 	if sprite:
 		sprite.visible = true
 		sprite.modulate = Color.WHITE
-		sprite.scale = Vector2(1.0, 1.0)
+		# Don't reset scale here - let level manager handle it
+		sprite.rotation = 0.0
+		
+		# Reset animation state for AnimatedSprite2D
+		if sprite is AnimatedSprite2D:
+			if diamond_type == "fire":
+				sprite.animation = "red_idle"
+			elif diamond_type == "water":
+				sprite.animation = "blue_idle"
+			sprite.play()
 	
 	# Defer collision shape changes to avoid physics conflicts
 	if collection_area:

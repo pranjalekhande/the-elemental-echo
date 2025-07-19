@@ -17,15 +17,10 @@ func _ready() -> void:
 	_setup_fire_visuals()
 
 func _setup_fire_visuals() -> void:
-	# Configure the sprite appearance
-	if sprite:
-		if sprite.has_method("set_color"):
-			sprite.color = get_diamond_color()
-		
-		# Add a subtle glow effect
-		var glow_material = CanvasItemMaterial.new()
-		glow_material.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
-		sprite.material = glow_material
+	# Configure the animated sprite
+	if sprite and sprite is AnimatedSprite2D:
+		sprite.animation = "red_idle"
+		sprite.play()
 
 func get_diamond_color() -> Color:
 	# Bright orange-red fire color
@@ -35,36 +30,71 @@ func get_particle_color() -> Color:
 	# Warm fire particle color
 	return Color(1.0, 0.6, 0.2, 0.8)
 
-func _play_collection_animation() -> void:
-	"""Fire-specific collection animation with flame effects"""
-	if sprite:
-		# Fire burst animation
-		var tween = create_tween()
-		
-		# Quick flash to bright white, then fade
-		tween.parallel().tween_property(sprite, "modulate", Color.WHITE, 0.1)
-		tween.parallel().tween_property(sprite, "scale", Vector2(1.5, 1.5), 0.1)
-		
-		tween.tween_interval(0.1)
-		
-		tween.parallel().tween_property(sprite, "modulate", Color(1.0, 0.4, 0.1, 0.0), 0.3)
-		tween.parallel().tween_property(sprite, "scale", Vector2(2.5, 2.5), 0.3)
-
 func _update_visual_state() -> void:
-	"""Fire diamond specific visual updates"""
-	super._update_visual_state()
-	
+	"""Update visual appearance based on compatibility and collection state"""
 	if is_collected:
 		return
 		
-	# Add pulsing fire effect when Echo is nearby
-	if sprite and echo_in_range:
-		if compatible_form:
-			# Pulse brighter for compatible form
-			var tween = create_tween()
-			tween.set_loops()
-			tween.tween_property(sprite, "modulate:a", 1.2, 0.5)
-			tween.tween_property(sprite, "modulate:a", 0.8, 0.5)
-		elif not compatible_form:
-			# Show incompatibility with water form
-			sprite.modulate = Color(0.3, 0.1, 0.1, 0.5)  # Very dim red 
+	if sprite and sprite is AnimatedSprite2D:
+		# Store current scale to preserve level scaling
+		var current_scale = sprite.scale
+		
+		if echo_in_range and compatible_form:
+			# Bright, active state - play sparkle animation
+			sprite.animation = "red_sparkle"
+			sprite.modulate = Color.WHITE
+			# Maintain scale but add slight interaction feedback
+			sprite.scale = current_scale * 1.1
+		elif echo_in_range and not compatible_form:
+			# Dimmed, incompatible state
+			sprite.animation = "red_idle"
+			sprite.modulate = Color(0.5, 0.5, 0.5, 0.7)
+			sprite.scale = current_scale
+		else:
+			# Normal state
+			sprite.animation = "red_idle"
+			sprite.modulate = Color.WHITE
+			sprite.scale = current_scale
+
+func _play_collection_animation() -> void:
+	"""Enhanced fire-specific collection animation with multi-stage effects"""
+	if sprite and sprite is AnimatedSprite2D:
+		# Multi-stage fire burst animation
+		var tween = create_tween()
+		tween.set_parallel(true)
+		
+		# Stage 1: Quick flash to bright white
+		tween.tween_property(sprite, "modulate", Color.WHITE * 1.5, 0.1)
+		tween.tween_property(sprite, "scale", Vector2(1.4, 1.4), 0.1)
+		
+		# Stage 2: Fire burst with rotation
+		tween.tween_property(sprite, "rotation", TAU * 2, 0.4)
+		
+		# Stage 3: Fade with expanding scale
+		tween.tween_interval(0.1)
+		tween.tween_property(sprite, "modulate", Color(1.0, 0.4, 0.1, 0.0), 0.3)
+		tween.tween_property(sprite, "scale", Vector2(3.0, 3.0), 0.3)
+		
+		# Enhanced glow effects
+		_animate_glow_effects()
+
+func _animate_glow_effects() -> void:
+	"""Animate the glow effects during collection"""
+	var outer_glow = get_node_or_null("OuterGlow")
+	var inner_glow = get_node_or_null("Sprite/InnerGlow")
+	
+	if outer_glow:
+		var glow_tween = create_tween()
+		glow_tween.set_parallel(true)
+		glow_tween.tween_property(outer_glow, "modulate:a", 1.0, 0.1)
+		glow_tween.tween_property(outer_glow, "scale", Vector2(3.0, 3.0), 0.4)
+		glow_tween.tween_interval(0.1)
+		glow_tween.tween_property(outer_glow, "modulate:a", 0.0, 0.3)
+	
+	if inner_glow:
+		var inner_tween = create_tween()
+		inner_tween.set_parallel(true)
+		inner_tween.tween_property(inner_glow, "modulate:a", 0.8, 0.1)
+		inner_tween.tween_property(inner_glow, "scale", Vector2(2.0, 2.0), 0.4)
+		inner_tween.tween_interval(0.1)
+		inner_tween.tween_property(inner_glow, "modulate:a", 0.0, 0.3) 
