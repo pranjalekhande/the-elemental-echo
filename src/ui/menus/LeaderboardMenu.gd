@@ -10,17 +10,14 @@ const MAX_DISPLAY_ENTRIES = 10
 var leaderboard_data: Array = []
 
 func _ready() -> void:
-	# Add navigation buttons at bottom
-	_add_bottom_buttons()
-	
-	# Add clear button for testing
-	_add_clear_button()
-	
 	# Load and display leaderboard
 	_load_leaderboard()
 	
 	# Connect to leaderboard updates
 	_connect_to_leaderboard_service()
+	
+	# Add all buttons at bottom in one clean layout
+	_add_all_buttons()
 
 func _load_leaderboard() -> void:
 	"""Load leaderboard data from LeaderboardService"""
@@ -78,18 +75,23 @@ func _display_leaderboard() -> void:
 	# Create centered container for the grid
 	var center_container = HBoxContainer.new()
 	center_container.alignment = BoxContainer.ALIGNMENT_CENTER
+	center_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	
 	# Create grid container for entries
 	var grid_container = GridContainer.new()
 	grid_container.columns = 2
-	grid_container.add_theme_constant_override("h_separation", 20)
-	grid_container.add_theme_constant_override("v_separation", 15)
+	grid_container.add_theme_constant_override("h_separation", 30)  # Perfect spacing between columns
+	grid_container.add_theme_constant_override("v_separation", 25)  # Perfect spacing between rows
 	
 	# Create entries
 	for i in range(min(leaderboard_data.size(), MAX_DISPLAY_ENTRIES)):
 		var entry = leaderboard_data[i]
 		var entry_card = _create_leaderboard_entry(i + 1, entry)
 		grid_container.add_child(entry_card)
+	
+	# Set grid alignment properties for better consistency
+	grid_container.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	grid_container.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	
 	# Add grid to centered container, then to main container
 	center_container.add_child(grid_container)
@@ -121,7 +123,9 @@ func _create_leaderboard_entry(rank: int, entry: Dictionary) -> Control:
 	"""Create a single leaderboard entry card"""
 	# Main card container
 	var card = Panel.new()
-	card.custom_minimum_size = Vector2(500, 100)  # Wider to prevent overflow
+	card.custom_minimum_size = Vector2(480, 100)  # Fixed size for perfect alignment
+	card.size_flags_horizontal = Control.SIZE_SHRINK_CENTER  # Prevent stretching
+	card.size_flags_vertical = Control.SIZE_SHRINK_CENTER    # Consistent alignment
 	
 	# Card background styling
 	var style_box = StyleBoxFlat.new()
@@ -313,29 +317,54 @@ func _on_back_button_pressed() -> void:
 	# Go back to level select menu (or start menu if called from there)
 	get_tree().change_scene_to_file("res://scenes/ui/menus/LevelSelectMenu.tscn") 
 
-func _add_clear_button() -> void:
-	"""Add a clear leaderboard button for testing"""
+func _add_all_buttons() -> void:
+	"""Add all buttons at bottom in one clean, aligned layout"""
 	var vbox = get_node_or_null("VBox")
 	if vbox:
-		# Create a horizontal container for the button
+		# Add spacer before buttons for better layout
+		var button_spacer = Control.new()
+		button_spacer.custom_minimum_size.y = 40
+		vbox.add_child(button_spacer)
+		
+		# Create single button container for all buttons
 		var button_container = HBoxContainer.new()
 		button_container.alignment = BoxContainer.ALIGNMENT_CENTER
+		button_container.add_theme_constant_override("separation", 25)  # Consistent spacing
 		
-		# Create clear button
+		# Create Back button
+		var back_btn = Button.new()
+		back_btn.text = "← Back"
+		back_btn.custom_minimum_size = Vector2(120, 50)
+		back_btn.add_theme_font_size_override("font_size", 18)
+		back_btn.add_theme_color_override("font_color", Color(0.9, 0.9, 0.9))
+		back_btn.pressed.connect(_on_back_button_pressed)
+		
+		# Create Settings button
+		var settings_btn = Button.new()
+		settings_btn.text = "⚙️ Settings"
+		settings_btn.custom_minimum_size = Vector2(140, 50)
+		settings_btn.add_theme_font_size_override("font_size", 18)
+		settings_btn.add_theme_color_override("font_color", Color(0.9, 0.9, 0.9))
+		settings_btn.pressed.connect(_on_settings_button_pressed)
+		
+		# Create Clear All button
 		var clear_button = Button.new()
 		clear_button.text = "🗑️ Clear All"
-		clear_button.custom_minimum_size = Vector2(120, 40)
+		clear_button.custom_minimum_size = Vector2(120, 50)
+		clear_button.add_theme_font_size_override("font_size", 16)
+		clear_button.add_theme_color_override("font_color", Color(1, 0.7, 0.7, 1))
 		clear_button.pressed.connect(_on_clear_button_pressed)
 		
-		# Style the button
-		clear_button.add_theme_color_override("font_color", Color(1, 0.6, 0.6, 1))
-		clear_button.add_theme_font_size_override("font_size", 14)
-		
+		# Add all buttons to container in order
+		button_container.add_child(back_btn)
+		button_container.add_child(settings_btn)
 		button_container.add_child(clear_button)
+		
+		# Add container to VBox
 		vbox.add_child(button_container)
-		print("✅ Clear button added to LeaderboardMenu")
+		print("✅ All buttons added to LeaderboardMenu in clean layout")
 	else:
-		print("❌ Could not find VBox to add clear button")
+		print("❌ Could not find VBox to add buttons")
 
 func _on_clear_button_pressed() -> void:
 	"""Handle clear button press"""
@@ -358,44 +387,7 @@ func _on_clear_button_pressed() -> void:
 	else:
 		print("❌ Could not access LeaderboardService to clear") 
 
-func _add_bottom_buttons() -> void:
-	"""Add back and settings buttons at the bottom of the VBox"""
-	var vbox = get_node_or_null("VBox")
-	if vbox:
-		# Create button container
-		var button_container = HBoxContainer.new()
-		button_container.alignment = BoxContainer.ALIGNMENT_CENTER
-		
-		# Create back button
-		var back_btn = Button.new()
-		back_btn.text = "← Back"
-		back_btn.custom_minimum_size = Vector2(120, 45)
-		back_btn.add_theme_font_size_override("font_size", 18)
-		back_btn.add_theme_color_override("font_color", Color(0.9, 0.9, 0.9))
-		back_btn.pressed.connect(_on_back_button_pressed)
-		
-		# Add spacer between buttons
-		var spacer = Control.new()
-		spacer.custom_minimum_size = Vector2(40, 0)
-		
-		# Create settings button
-		var settings_btn = Button.new()
-		settings_btn.text = "⚙️ Settings"
-		settings_btn.custom_minimum_size = Vector2(140, 45)
-		settings_btn.add_theme_font_size_override("font_size", 18)
-		settings_btn.add_theme_color_override("font_color", Color(0.9, 0.9, 0.9))
-		settings_btn.pressed.connect(_on_settings_button_pressed)
-		
-		# Add buttons to container
-		button_container.add_child(back_btn)
-		button_container.add_child(spacer)
-		button_container.add_child(settings_btn)
-		
-		# Add container to VBox
-		vbox.add_child(button_container)
-		print("✅ Bottom navigation buttons added")
-	else:
-		print("❌ Could not find VBox to add navigation buttons")
+
 
 func _on_settings_button_pressed() -> void:
 	"""Handle settings button press"""
