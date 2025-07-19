@@ -70,103 +70,187 @@ func _display_leaderboard() -> void:
 	var header = _create_header()
 	leaderboard_container.add_child(header)
 	
-	# Add separator
-	var separator = HSeparator.new()
-	leaderboard_container.add_child(separator)
+	# Add spacing after header
+	var header_spacer = Control.new()
+	header_spacer.custom_minimum_size.y = 30
+	leaderboard_container.add_child(header_spacer)
+	
+	# Create centered container for the grid
+	var center_container = HBoxContainer.new()
+	center_container.alignment = BoxContainer.ALIGNMENT_CENTER
+	
+	# Create grid container for entries
+	var grid_container = GridContainer.new()
+	grid_container.columns = 2
+	grid_container.add_theme_constant_override("h_separation", 20)
+	grid_container.add_theme_constant_override("v_separation", 15)
 	
 	# Create entries
 	for i in range(min(leaderboard_data.size(), MAX_DISPLAY_ENTRIES)):
 		var entry = leaderboard_data[i]
-		var entry_row = _create_leaderboard_entry(i + 1, entry)
-		leaderboard_container.add_child(entry_row)
+		var entry_card = _create_leaderboard_entry(i + 1, entry)
+		grid_container.add_child(entry_card)
+	
+	# Add grid to centered container, then to main container
+	center_container.add_child(grid_container)
+	leaderboard_container.add_child(center_container)
 
 func _create_header() -> Control:
 	"""Create the leaderboard header row"""
 	var header_container = HBoxContainer.new()
+	header_container.alignment = BoxContainer.ALIGNMENT_CENTER
 	
-	var rank_label = Label.new()
-	rank_label.text = "RANK"
-	rank_label.custom_minimum_size.x = 80
-	rank_label.add_theme_font_size_override("font_size", 18)
-	rank_label.add_theme_color_override("font_color", Color(1, 0.9, 0.4))
-	header_container.add_child(rank_label)
-	
-	var name_label = Label.new()
-	name_label.text = "PLAYER"
-	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	name_label.add_theme_font_size_override("font_size", 18)
-	name_label.add_theme_color_override("font_color", Color(1, 0.9, 0.4))
-	header_container.add_child(name_label)
-	
-	var score_label = Label.new()
-	score_label.text = "SCORE"
-	score_label.custom_minimum_size.x = 100
-	score_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	score_label.add_theme_font_size_override("font_size", 18)
-	score_label.add_theme_color_override("font_color", Color(1, 0.9, 0.4))
-	header_container.add_child(score_label)
-	
-	var date_label = Label.new()
-	date_label.text = "DATE"
-	date_label.custom_minimum_size.x = 120
-	date_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	date_label.add_theme_font_size_override("font_size", 18)
-	date_label.add_theme_color_override("font_color", Color(1, 0.9, 0.4))
-	header_container.add_child(date_label)
+	var header_label = Label.new()
+	header_label.text = "TOP 10 PLAYERS"
+	header_label.add_theme_font_size_override("font_size", 24)
+	header_label.add_theme_color_override("font_color", Color(1, 0.9, 0.4))
+	header_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	header_container.add_child(header_label)
 	
 	return header_container
 
 func _create_leaderboard_entry(rank: int, entry: Dictionary) -> Control:
-	"""Create a single leaderboard entry row"""
-	var entry_container = HBoxContainer.new()
+	"""Create a single leaderboard entry card"""
+	# Main card container
+	var card = Panel.new()
+	card.custom_minimum_size = Vector2(420, 100)  # Made wider to accommodate content
 	
-	# Rank with medal emojis for top 3
-	var rank_text = str(rank)
+	# Card background styling
+	var style_box = StyleBoxFlat.new()
 	if rank == 1:
-		rank_text = "🥇 1st"
-	elif rank == 2:
-		rank_text = "🥈 2nd"
-	elif rank == 3:
-		rank_text = "🥉 3rd"
+		style_box.bg_color = Color(0.25, 0.2, 0.1, 0.9)  # Richer gold tint for winner
+		style_box.border_color = Color(1.0, 0.84, 0.0, 0.8)  # Brighter gold border
+		style_box.border_width_left = 3
+		style_box.border_width_right = 3
+		style_box.border_width_top = 3
+		style_box.border_width_bottom = 3
+	elif rank <= 3:
+		style_box.bg_color = Color(0.18, 0.22, 0.26, 0.9)  # Slightly lighter for top 3
+		style_box.border_color = Color(0.8, 0.7, 0.4, 0.5)  # Subtle golden border
+		style_box.border_width_left = 2
+		style_box.border_width_right = 2
+		style_box.border_width_top = 2
+		style_box.border_width_bottom = 2
 	else:
-		rank_text = "#%d" % rank
+		style_box.bg_color = Color(0.15, 0.18, 0.22, 0.85)  # Standard dark
+		style_box.border_color = Color(0.3, 0.35, 0.4, 0.3)  # Subtle border
+		style_box.border_width_left = 1
+		style_box.border_width_right = 1
+		style_box.border_width_top = 1
+		style_box.border_width_bottom = 1
+	
+	style_box.corner_radius_top_left = 12
+	style_box.corner_radius_top_right = 12
+	style_box.corner_radius_bottom_left = 12
+	style_box.corner_radius_bottom_right = 12
+	card.add_theme_stylebox_override("panel", style_box)
+	
+	# Content container with margins
+	var margin_container = MarginContainer.new()
+	margin_container.add_theme_constant_override("margin_left", 20)
+	margin_container.add_theme_constant_override("margin_right", 20)
+	margin_container.add_theme_constant_override("margin_top", 16)
+	margin_container.add_theme_constant_override("margin_bottom", 16)
+	
+	# Main content layout
+	var content_container = HBoxContainer.new()
+	content_container.alignment = BoxContainer.ALIGNMENT_CENTER
+	
+	# Rank section (fixed width)
+	var rank_container = VBoxContainer.new()
+	rank_container.custom_minimum_size.x = 80  # Fixed width for rank
+	rank_container.alignment = BoxContainer.ALIGNMENT_CENTER
 	
 	var rank_label = Label.new()
-	rank_label.text = rank_text
-	rank_label.custom_minimum_size.x = 80
-	rank_label.add_theme_font_size_override("font_size", 16)
-	rank_label.add_theme_color_override("font_color", Color(0.9, 0.9, 0.9))
-	entry_container.add_child(rank_label)
+	if rank <= 3:
+		match rank:
+			1:
+				rank_label.text = "🥇"
+				rank_label.add_theme_color_override("font_color", Color(1.0, 0.9, 0.3))  # Brighter gold
+			2:
+				rank_label.text = "🥈"
+				rank_label.add_theme_color_override("font_color", Color(0.85, 0.85, 0.85))  # Bright silver
+			3:
+				rank_label.text = "🥉"
+				rank_label.add_theme_color_override("font_color", Color(0.9, 0.6, 0.2))  # Brighter bronze
+	else:
+		rank_label.text = str(rank)
+		rank_label.add_theme_color_override("font_color", Color(0.9, 0.8, 0.5))  # Golden tint for all ranks
 	
-	# Player name
+	rank_label.add_theme_font_size_override("font_size", 32)  # Bigger font
+	rank_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	rank_container.add_child(rank_label)
+	
+	# Add rank suffix for visual appeal (for all ranks)
+	var suffix_label = Label.new()
+	match rank:
+		1:
+			suffix_label.text = "ST"
+		2:
+			suffix_label.text = "ND"
+		3:
+			suffix_label.text = "RD"
+		_:
+			suffix_label.text = "TH"
+	
+	suffix_label.add_theme_font_size_override("font_size", 12)
+	suffix_label.add_theme_color_override("font_color", Color(0.7, 0.6, 0.3))
+	suffix_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	rank_container.add_child(suffix_label)
+	
+	content_container.add_child(rank_container)
+	
+	# Add explicit spacer
+	var spacer = Control.new()
+	spacer.custom_minimum_size.x = 25
+	content_container.add_child(spacer)
+	
+	# Player name section (fixed width to prevent overflow)
 	var name_label = Label.new()
-	name_label.text = entry.get("name", "Unknown")
+	name_label.text = entry.get("name", "Unknown Player")
+	name_label.add_theme_font_size_override("font_size", 22)  # Bigger font
+	name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	name_label.custom_minimum_size.x = 200  # Fixed width for name section
 	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	name_label.add_theme_font_size_override("font_size", 16)
-	name_label.add_theme_color_override("font_color", Color(0.9, 0.9, 0.9))
-	entry_container.add_child(name_label)
+	name_label.clip_contents = true  # Prevent text overflow
+	name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS  # Add ellipsis for long names
+	if rank == 1:
+		name_label.add_theme_color_override("font_color", Color(1.0, 0.95, 0.7))  # Golden white for winner
+	elif rank <= 3:
+		name_label.add_theme_color_override("font_color", Color(0.95, 0.9, 0.8))  # Warm white for top 3
+	else:
+		name_label.add_theme_color_override("font_color", Color(0.9, 0.85, 0.7))  # Slightly golden tint
 	
-	# Score
+	content_container.add_child(name_label)
+	
+	# Add another spacer
+	var spacer2 = Control.new()
+	spacer2.custom_minimum_size.x = 15
+	content_container.add_child(spacer2)
+	
+	# Score section (fixed width, right-aligned)
 	var score_label = Label.new()
-	score_label.text = str(entry.get("points", 0))
-	score_label.custom_minimum_size.x = 100
+	score_label.text = str(int(entry.get("points", 0))) + "            "
+	score_label.add_theme_font_size_override("font_size", 20)  # Bigger font
 	score_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	score_label.add_theme_font_size_override("font_size", 16)
-	score_label.add_theme_color_override("font_color", Color(0.9, 0.9, 0.9))
-	entry_container.add_child(score_label)
+	score_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	score_label.custom_minimum_size.x = 100  # Slightly wider for left margin
+	score_label.add_theme_constant_override("margin_right", 10)  # Add right margin to move text left
+	if rank == 1:
+		score_label.add_theme_color_override("font_color", Color(0.9, 0.8, 0.4))  # Golden for winner
+	else:
+		score_label.add_theme_color_override("font_color", Color(0.8, 0.7, 0.5))  # Warm tone
 	
-	# Date (formatted)
-	var date_label = Label.new()
-	var date_string = entry.get("date", "")
-	var formatted_date = _format_date(date_string)
-	date_label.text = formatted_date
-	date_label.custom_minimum_size.x = 120
-	date_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	date_label.add_theme_font_size_override("font_size", 14)
-	date_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
-	entry_container.add_child(date_label)
+	content_container.add_child(score_label)
 	
-	return entry_container
+	# Assemble the card
+	margin_container.add_child(content_container)
+	card.add_child(margin_container)
+	
+	# Set up anchors
+	margin_container.anchors_preset = Control.PRESET_FULL_RECT
+	
+	return card
 
 func _display_empty_leaderboard() -> void:
 	"""Display message when leaderboard is empty"""
