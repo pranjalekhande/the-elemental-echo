@@ -122,6 +122,11 @@ func _show_welcome_dialog() -> void:
 func _on_welcome_completed(player_name: String) -> void:
 	"""Handle welcome dialog completion"""
 	print("🎉 Welcome completed for player: '%s'" % player_name)
+	
+	# Save the player name to ProgressManager for later use
+	ProgressManager.set_player_name(player_name)
+	print("💾 Player name saved to ProgressManager: '%s'" % player_name)
+	
 	_navigate_to_level_select()
 
 func _on_welcome_skipped() -> void:

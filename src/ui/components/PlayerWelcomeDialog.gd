@@ -78,7 +78,10 @@ func _setup_for_new_user() -> void:
 	
 	# Button configuration
 	continue_button.text = "Start Playing"
-	skip_button.text = "Play as Guest"
+	
+	# Update skip button to show next guest name
+	var next_guest = _get_next_guest_name()
+	skip_button.text = "Play as " + next_guest
 	change_button.visible = false
 	
 	# Enable name input
@@ -94,7 +97,11 @@ func _setup_for_returning_user() -> void:
 	
 	# Button configuration
 	continue_button.text = "Continue as " + original_name
-	skip_button.text = "Play as Guest"
+	
+	# Update skip button to show next guest name
+	var next_guest = _get_next_guest_name()
+	skip_button.text = "Play as " + next_guest
+	
 	change_button.text = "Change Name"
 	change_button.visible = true
 	
@@ -129,7 +136,9 @@ func _on_continue_pressed() -> void:
 func _on_skip_pressed() -> void:
 	"""Handle skip button press - play as guest"""
 	print("⚠️ User chose to play as guest")
-	_complete_welcome("Guest")
+	var guest_name = _get_next_guest_name()
+	print("🎮 Assigned guest name: %s" % guest_name)
+	_complete_welcome(guest_name)
 
 func _on_change_pressed() -> void:
 	"""Handle change name button press for returning users"""
@@ -176,6 +185,10 @@ func _validate_name(player_name: String) -> Dictionary:
 	if cleaned_name.length() > 20:
 		return {"valid": false, "error": "Name too long (max 20 characters)"}
 	
+	# Prevent users from manually entering guest names
+	if cleaned_name.to_lower().begins_with("guest "):
+		return {"valid": false, "error": "Guest names are auto-assigned. Use the 'Play as Guest' button."}
+	
 	# Check for inappropriate content (basic filter)
 	var banned_words = ["admin", "system", "null", "undefined", "bot"]
 	var lower_name = cleaned_name.to_lower()
@@ -203,6 +216,20 @@ func _complete_welcome(player_name: String) -> void:
 	visible = false
 	welcome_completed.emit(player_name)
 	print("✅ Welcome flow completed for: '%s'" % player_name)
+
+func _get_next_guest_name() -> String:
+	"""Get the next available guest name from LeaderboardService"""
+	var lbs = null
+	if Engine.has_singleton("LeaderboardService"):
+		lbs = Engine.get_singleton("LeaderboardService")
+	else:
+		lbs = get_tree().get_root().get_node_or_null("LeaderboardService")
+	
+	if lbs and lbs.has_method("get_next_guest_name"):
+		return lbs.get_next_guest_name()
+	else:
+		print("⚠️ LeaderboardService not found, using default guest name")
+		return "Guest 1"
 
 func _unhandled_input(event: InputEvent) -> void:
 	"""Handle ESC key to skip dialog"""

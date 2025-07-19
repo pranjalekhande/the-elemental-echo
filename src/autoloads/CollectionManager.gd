@@ -13,6 +13,7 @@ var total_diamonds_collected: int = 0
 var current_score: int = 0
 
 # Level tracking
+var current_level_id: String = ""  # Track which level is currently being played
 var total_fire_diamonds_in_level: int = 0
 var total_water_diamonds_in_level: int = 0
 var form_switches: int = 0
@@ -44,6 +45,7 @@ func reset_session() -> void:
 	current_score = 0
 	form_switches = 0
 	session_start_time = Time.get_unix_time_from_system()
+	# Note: current_level_id is set separately via set_current_level()
 	
 	# Emit reset signals
 	score_updated.emit(current_score)
@@ -52,6 +54,15 @@ func set_level_diamond_counts(fire_count: int, water_count: int) -> void:
 	"""Call this when level starts to set total available diamonds"""
 	total_fire_diamonds_in_level = fire_count
 	total_water_diamonds_in_level = water_count
+
+func set_current_level(level_id: String) -> void:
+	"""Set the current level being played"""
+	current_level_id = level_id
+	print("📊 CollectionManager: Current level set to %s" % level_id)
+
+func get_current_level() -> String:
+	"""Get the current level being played"""
+	return current_level_id
 
 func collect_diamond(type: String, points: int) -> void:
 	"""Called when Echo collects a diamond"""

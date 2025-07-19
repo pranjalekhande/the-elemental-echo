@@ -97,15 +97,23 @@ func _display_leaderboard() -> void:
 
 func _create_header() -> Control:
 	"""Create the leaderboard header row"""
-	var header_container = HBoxContainer.new()
+	var header_container = VBoxContainer.new()
 	header_container.alignment = BoxContainer.ALIGNMENT_CENTER
 	
 	var header_label = Label.new()
-	header_label.text = "TOP 10 PLAYERS"
+	header_label.text = "TOP PLAYERS - TOTAL SCORES"
 	header_label.add_theme_font_size_override("font_size", 24)
 	header_label.add_theme_color_override("font_color", Color(1, 0.9, 0.4))
 	header_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	header_container.add_child(header_label)
+	
+	# Add subtitle explaining the scoring
+	var subtitle_label = Label.new()
+	subtitle_label.text = "Best scores from all completed levels combined"
+	subtitle_label.add_theme_font_size_override("font_size", 14)
+	subtitle_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
+	subtitle_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	header_container.add_child(subtitle_label)
 	
 	return header_container
 
@@ -228,20 +236,38 @@ func _create_leaderboard_entry(rank: int, entry: Dictionary) -> Control:
 	spacer2.custom_minimum_size.x = 15
 	content_container.add_child(spacer2)
 	
-	# Score section (fixed width, right-aligned)
+	# Score section (fixed width, right-aligned) - Enhanced for player-centric display
+	var score_container = VBoxContainer.new()
+	score_container.custom_minimum_size.x = 120
+	score_container.alignment = BoxContainer.ALIGNMENT_CENTER
+	
+	# Total score label
 	var score_label = Label.new()
-	score_label.text = str(int(entry.get("points", 0))) + "            "
-	score_label.add_theme_font_size_override("font_size", 20)  # Bigger font
-	score_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	score_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	score_label.custom_minimum_size.x = 100  # Slightly wider for left margin
-	score_label.add_theme_constant_override("margin_right", 10)  # Add right margin to move text left
+	var total_score = int(entry.get("points", 0))
+	score_label.text = str(total_score) + " pts"
+	score_label.add_theme_font_size_override("font_size", 20)
+	score_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	if rank == 1:
 		score_label.add_theme_color_override("font_color", Color(0.9, 0.8, 0.4))  # Golden for winner
 	else:
 		score_label.add_theme_color_override("font_color", Color(0.8, 0.7, 0.5))  # Warm tone
 	
-	content_container.add_child(score_label)
+	score_container.add_child(score_label)
+	
+	# Levels completed info
+	var levels_label = Label.new()
+	var levels_completed = int(entry.get("levels_completed", 1))
+	if levels_completed == 1:
+		levels_label.text = "1 level"
+	else:
+		levels_label.text = str(levels_completed) + " levels"
+	levels_label.add_theme_font_size_override("font_size", 12)
+	levels_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	levels_label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
+	
+	score_container.add_child(levels_label)
+	
+	content_container.add_child(score_container)
 	
 	# Assemble the card
 	margin_container.add_child(content_container)

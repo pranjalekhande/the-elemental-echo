@@ -41,6 +41,9 @@ func _ready() -> void:
 	if CollectionManager:
 		CollectionManager.reset_session()
 		
+		# Set current level for proper tracking
+		CollectionManager.set_current_level("level_1")
+		
 		# Count diamonds in the level
 		var fire_diamonds = 0
 		var water_diamonds = 0

@@ -46,11 +46,35 @@ func _ready() -> void:
 
 func _detect_current_level() -> void:
 	"""Detect which level was just completed"""
+	# Get level info from CollectionManager which tracks the current level
+	if CollectionManager and CollectionManager.has_method("get_current_level"):
+		var detected_level = CollectionManager.get_current_level()
+		if detected_level != "":
+			current_level = detected_level
+			print("📊 Level detected from CollectionManager: %s" % current_level)
+			return
+		else:
+			print("⚠️ CollectionManager has no current level set")
+	
+	# Fallback: check scene path (though this may not work when EndScreen is current)
 	var scene_path = get_tree().current_scene.scene_file_path
+	print("📊 Current scene path: %s" % scene_path)
+	
 	if scene_path.contains("Level2"):
 		current_level = "level_2"
-	else:
+	elif scene_path.contains("Main"):
 		current_level = "level_1"
+	else:
+		# Last resort: check if we have level 2 data in progress to guess
+		if ProgressManager and ProgressManager.has_completed_level("level_1"):
+			# If player has completed level 1, likely this is level 2
+			current_level = "level_2"
+			print("📊 Guessing level_2 based on progress")
+		else:
+			current_level = "level_1"
+			print("📊 Defaulting to level_1")
+	
+	print("📊 Final detected level: %s" % current_level)
 
 func set_completed_level(level: String) -> void:
 	"""Manually set which level was completed"""
@@ -274,8 +298,8 @@ func _submit_score_with_name(player_name: String, final_score: int) -> void:
 		lbs = get_tree().get_root().get_node_or_null("LeaderboardService")
 	
 	if lbs:
-		lbs.add_score(player_name, final_score)
-		print("✅ Score submitted successfully")
+		lbs.add_score(player_name, final_score, current_level)
+		print("✅ Score submitted successfully for %s on %s" % [player_name, current_level])
 	else:
 		print("❌ LeaderboardService not found")
 
