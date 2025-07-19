@@ -244,7 +244,7 @@ func _create_leaderboard_entry(rank: int, entry: Dictionary) -> Control:
 	# Total score label
 	var score_label = Label.new()
 	var total_score = int(entry.get("points", 0))
-	score_label.text = str(total_score) + " pts"
+	score_label.text = str(total_score) + " pts   "  # Added extra spaces for better alignment
 	score_label.add_theme_font_size_override("font_size", 20)
 	score_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	if rank == 1:
