@@ -121,7 +121,7 @@ func _create_leaderboard_entry(rank: int, entry: Dictionary) -> Control:
 	"""Create a single leaderboard entry card"""
 	# Main card container
 	var card = Panel.new()
-	card.custom_minimum_size = Vector2(420, 100)  # Made wider to accommodate content
+	card.custom_minimum_size = Vector2(500, 100)  # Wider to prevent overflow
 	
 	# Card background styling
 	var style_box = StyleBoxFlat.new()
@@ -210,7 +210,7 @@ func _create_leaderboard_entry(rank: int, entry: Dictionary) -> Control:
 	
 	# Add explicit spacer
 	var spacer = Control.new()
-	spacer.custom_minimum_size.x = 25
+	spacer.custom_minimum_size.x = 15  # Reduced for better fit
 	content_container.add_child(spacer)
 	
 	# Player name section (fixed width to prevent overflow)
@@ -218,7 +218,7 @@ func _create_leaderboard_entry(rank: int, entry: Dictionary) -> Control:
 	name_label.text = entry.get("name", "Unknown Player")
 	name_label.add_theme_font_size_override("font_size", 22)  # Bigger font
 	name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	name_label.custom_minimum_size.x = 200  # Fixed width for name section
+	name_label.custom_minimum_size.x = 235  # Perfectly balanced with wider card
 	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	name_label.clip_contents = true  # Prevent text overflow
 	name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS  # Add ellipsis for long names
@@ -233,20 +233,23 @@ func _create_leaderboard_entry(rank: int, entry: Dictionary) -> Control:
 	
 	# Add another spacer
 	var spacer2 = Control.new()
-	spacer2.custom_minimum_size.x = 15
+	spacer2.custom_minimum_size.x = 10  # Reduced for better fit
 	content_container.add_child(spacer2)
 	
-	# Score section (fixed width, right-aligned) - Enhanced for player-centric display
+	# Score section (fixed width, center-aligned) - Enhanced for player-centric display
 	var score_container = VBoxContainer.new()
-	score_container.custom_minimum_size.x = 120
+	score_container.custom_minimum_size.x = 120  # Sufficient width with larger card
+	score_container.size_flags_horizontal = Control.SIZE_SHRINK_CENTER  # Allow proper sizing
 	score_container.alignment = BoxContainer.ALIGNMENT_CENTER
 	
-	# Total score label
+	# Total score label - use proper formatting and prevent clipping
 	var score_label = Label.new()
 	var total_score = int(entry.get("points", 0))
-	score_label.text = str(total_score) + " pts   "  # Added extra spaces for better alignment
+	score_label.text = "%d pts" % total_score  # Clean formatting without extra spaces
 	score_label.add_theme_font_size_override("font_size", 20)
-	score_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	score_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER  # Center align for consistency
+	score_label.clip_contents = false  # Prevent text clipping
+	score_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL  # Allow label to expand
 	if rank == 1:
 		score_label.add_theme_color_override("font_color", Color(0.9, 0.8, 0.4))  # Golden for winner
 	else:
