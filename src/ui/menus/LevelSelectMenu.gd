@@ -132,8 +132,8 @@ func _on_level_selected(level_id: String) -> void:
 		# Record attempt
 		ProgressManager.record_attempt(level_id)
 		
-		# Load the level scene
-		get_tree().change_scene_to_file(scene_path)
+		# Show splash screen instead of directly loading level
+		_show_level_splash_screen(level_id, scene_path)
 	else:
 		print("Error: Level not found: ", level_id)
 
@@ -223,6 +223,35 @@ func _on_menu_resized() -> void:
 	columns = min(columns, 6)  # Don't exceed 6 columns for readability
 	
 	level_cards_container.columns = columns 
+
+func _show_level_splash_screen(level_id: String, scene_path: String) -> void:
+	"""Show splash screen before loading the actual level"""
+	print("🌟 Loading splash screen for level: %s" % level_id)
+	
+	# Load the splash screen scene
+	if ResourceLoader.exists("res://scenes/ui/menus/LevelSplashScreen.tscn"):
+		var splash_scene: PackedScene = load("res://scenes/ui/menus/LevelSplashScreen.tscn")
+		var splash_screen: Control = splash_scene.instantiate()
+		
+		# Add splash screen to the scene tree
+		add_child(splash_screen)
+		
+		# Connect completion signal
+		splash_screen.splash_completed.connect(_on_splash_completed)
+		
+		# Show the splash screen with level-specific content
+		splash_screen.show_splash(level_id, scene_path)
+		
+		print("✅ Splash screen loaded and displayed")
+	else:
+		print("❌ Splash screen scene not found, loading level directly")
+		# Fallback: load level directly if splash screen is missing
+		get_tree().change_scene_to_file(scene_path)
+
+func _on_splash_completed(level_scene_path: String) -> void:
+	"""Handle splash screen completion and load the actual level"""
+	print("🚀 Splash completed, loading level: %s" % level_scene_path)
+	get_tree().change_scene_to_file(level_scene_path)
 
 func _on_settings_button_pressed() -> void:
 	"""Handle settings button press"""

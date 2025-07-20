@@ -1,0 +1,153 @@
+[gd_scene load_steps=4 format=3 uid="uid://b8m2xkwqfm8dj"]
+
+[ext_resource type="Script" path="res://src/ui/menus/LevelSplashScreen.gd" id="1_y5k8m"]
+[ext_resource type="Texture2D" path="res://assets/backgrounds/splashscreenbg.png" id="2_mystical_bg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1"]
+bg_color = Color(0.08, 0.12, 0.18, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 0.5, 0.3, 0.4)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_left = 12
+corner_radius_bottom_right = 12
+
+[node name="LevelSplashScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_y5k8m")
+
+[node name="BackgroundImage" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource("2_mystical_bg")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="DarkOverlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.02, 0.05, 0.1, 0.3)
+
+[node name="MainContent" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="ContentPanel" type="Panel" parent="MainContent"]
+layout_mode = 2
+custom_minimum_size = Vector2(500, 350)
+theme_override_styles/panel = SubResource("StyleBoxFlat_1")
+
+[node name="VBox" type="VBoxContainer" parent="MainContent/ContentPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = 30.0
+offset_right = -30.0
+offset_bottom = -30.0
+
+[node name="TopSpacer" type="Control" parent="MainContent/ContentPanel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="EchoOrb" type="Control" parent="MainContent/ContentPanel/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(60, 60)
+size_flags_horizontal = 4
+
+[node name="OrbBackground" type="ColorRect" parent="MainContent/ContentPanel/VBox/EchoOrb"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -30.0
+offset_top = -30.0
+offset_right = 30.0
+offset_bottom = 30.0
+color = Color(0.2, 0.3, 0.4, 0.3)
+
+[node name="OrbGlow" type="ColorRect" parent="MainContent/ContentPanel/VBox/EchoOrb"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+color = Color(0.4, 0.7, 1, 0.8)
+
+[node name="TitleSpacer" type="Control" parent="MainContent/ContentPanel/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 25)
+
+[node name="LevelTitle" type="Label" parent="MainContent/ContentPanel/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 32
+text = "First Steps"
+horizontal_alignment = 1
+
+[node name="LevelSubtitle" type="Label" parent="MainContent/ContentPanel/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.7, 0.8, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+text = "Ancient chambers stir with forgotten whispers..."
+horizontal_alignment = 1
+
+[node name="MiddleSpacer" type="Control" parent="MainContent/ContentPanel/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 30)
+
+[node name="LoadingContainer" type="HBoxContainer" parent="MainContent/ContentPanel/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="LoadingLabel" type="Label" parent="MainContent/ContentPanel/VBox/LoadingContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.7, 0.8, 1)
+theme_override_font_sizes/font_size = 12
+text = "Awakening"
+
+[node name="LoadingDots" type="Label" parent="MainContent/ContentPanel/VBox/LoadingContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.7, 0.8, 1)
+theme_override_font_sizes/font_size = 12
+text = "..."
+
+[node name="BottomSpacer" type="Control" parent="MainContent/ContentPanel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="SkipHint" type="Label" parent="MainContent/ContentPanel/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.5, 0.6, 0.7, 0.8)
+theme_override_font_sizes/font_size = 10
+text = "Press any key to continue..."
+horizontal_alignment = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+[node name="SplashTimer" type="Timer" parent="."]
+wait_time = 3.0
+one_shot = true 
